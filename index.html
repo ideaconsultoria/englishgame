@@ -63,12 +63,16 @@
             font-weight: 600;
             color: #0f766e; /* Teal ainda mais escuro para palavras enfatizadas */
         }
-        .fill-in-blanks-container, .qa-container, .true-false-container, .flashcard-game-container {
+        .fill-in-blanks-container, .qa-container, .true-false-container,
+        .error-correction-container, .sentence-ordering-container,
+        .sentence-transformation-container, .synonym-antonym-container,
+        .flashcard-game-container, .writing-guide-container {
             display: flex;
             flex-direction: column;
             gap: 1rem;
         }
-        .blank-item, .qa-item, .tf-item, .flashcard-item {
+        .blank-item, .qa-item, .tf-item, .correction-item, .ordering-item,
+        .transformation-item, .synonym-antonym-item, .flashcard-item, .writing-item {
             display: flex;
             flex-direction: column;
             gap: 0.5rem;
@@ -78,11 +82,15 @@
             border: 1px solid #cbd5e1;
             position: relative; /* Para posicionar o botão de reset individual */
         }
-        .blank-item label, .qa-item label, .tf-item label, .flashcard-item label {
+        .blank-item label, .qa-item label, .tf-item label, .correction-item label,
+        .ordering-item label, .transformation-item label, .synonym-antonym-item label,
+        .flashcard-item label, .writing-item label {
             font-weight: 600;
             color: #475569;
         }
-        .blank-item input, .qa-item input, .qa-item textarea, .flashcard-item input, .flashcard-item textarea {
+        .blank-item input, .qa-item input, .qa-item textarea, .flashcard-item input,
+        .flashcard-item textarea, .correction-item textarea, .ordering-item input,
+        .transformation-item textarea, .synonym-antonym-item select, .writing-item textarea {
             padding: 0.75rem;
             border: 1px solid #94a3b8;
             border-radius: 0.5rem;
@@ -94,7 +102,6 @@
         .feedback {
             margin-top: 0.5rem;
             font-weight: 600;
-            /* As cores serão adicionadas via JS após a verificação global */
         }
         .correct {
             color: #10b981; /* Verde */
@@ -169,6 +176,131 @@
             font-size: 0.9rem;
             margin-top: 0.5rem;
         }
+        .scrambled-words {
+            font-weight: bold;
+            color: #3b82f6;
+            margin-bottom: 0.5rem;
+        }
+
+        /* Estilos do Modal */
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.7);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+            visibility: hidden;
+            opacity: 0;
+            transition: visibility 0s, opacity 0.3s ease;
+        }
+        .modal-overlay.visible {
+            visibility: visible;
+            opacity: 1;
+        }
+        .modal-content {
+            background-color: #ffffff;
+            border-radius: 1rem;
+            padding: 2rem;
+            max-width: 700px;
+            width: 90%;
+            max-height: 90vh; /* Limitar altura para rolagem */
+            overflow-y: auto;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+            position: relative;
+            transform: translateY(-20px);
+            transition: transform 0.3s ease;
+        }
+        .modal-overlay.visible .modal-content {
+            transform: translateY(0);
+        }
+        .modal-close-button {
+            position: absolute;
+            top: 1rem;
+            right: 1rem;
+            background: none;
+            border: none;
+            font-size: 1.5rem;
+            cursor: pointer;
+            color: #64748b;
+        }
+        .modal-close-button:hover {
+            color: #1e293b;
+        }
+        .modal-title {
+            font-size: 2rem;
+            font-weight: 700;
+            color: #1e293b;
+            margin-bottom: 1.5rem;
+            text-align: center;
+        }
+        .modal-score-summary {
+            font-size: 1.5rem;
+            font-weight: 600;
+            text-align: center;
+            margin-bottom: 1.5rem;
+            color: #0d9488;
+        }
+        .modal-incorrect-answers h3 {
+            font-size: 1.25rem;
+            font-weight: 700;
+            color: #1e293b;
+            margin-top: 1.5rem;
+            margin-bottom: 0.75rem;
+            border-bottom: 1px solid #e2e8f0;
+            padding-bottom: 0.5rem;
+        }
+        .modal-incorrect-answers ul {
+            list-style: none;
+            padding-left: 0;
+        }
+        .modal-incorrect-answers li {
+            margin-bottom: 0.75rem;
+            padding: 0.5rem;
+            background-color: #fef2f2; /* Light red for incorrect items */
+            border-left: 4px solid #ef4444; /* Red border */
+            border-radius: 0.5rem;
+        }
+        .modal-incorrect-answers .correct-answer {
+            font-weight: 600;
+            color: #10b981; /* Green for correct answer */
+        }
+        .modal-incorrect-answers .user-answer {
+            font-style: italic;
+            color: #475569;
+        }
+        .writing-guide-content {
+            background-color: #ecfdf5; /* Light green background */
+            border: 1px solid #a7f3d0;
+            border-radius: 0.75rem;
+            padding: 1.5rem;
+            margin-bottom: 1.5rem;
+        }
+        .writing-guide-content h4 {
+            font-size: 1.1rem;
+            font-weight: 700;
+            color: #0d9488;
+            margin-bottom: 0.5rem;
+        }
+        .writing-guide-content ul {
+            list-style: disc;
+            margin-left: 1.5rem;
+            margin-bottom: 1rem;
+        }
+        .writing-guide-content p {
+            margin-bottom: 0.5rem;
+        }
+        .writing-guide-content .highlight-instruction {
+            font-style: italic;
+            color: #475569;
+            margin-top: 1rem;
+            padding-top: 0.5rem;
+            border-top: 1px dashed #cbd5e1;
+        }
     </style>
 </head>
 <body>
@@ -191,9 +323,6 @@
             <div class="fill-in-blanks-container" id="fillInBlanksContainer">
                 <!-- As lacunas serão geradas aqui pelo JavaScript -->
             </div>
-            <div class="button-group">
-                <button class="action-button" onclick="checkFillInBlanks()">Verificar Respostas</button>
-            </div>
             <div id="fillInBlanksScore" class="score-display hidden"></div>
         </div>
 
@@ -203,9 +332,6 @@
             <p class="text-center text-sm text-gray-600 mb-4">Para cada afirmação, **crie uma pergunta** que a afirmação responde, ou **crie uma resposta** para a pergunta dada, usando o tempo verbal presente correto.</p>
             <div class="qa-container" id="qaContainer">
                 <!-- Os itens de Q&A serão gerados aqui pelo JavaScript -->
-            </div>
-            <div class="button-group">
-                <button class="action-button" onclick="checkQA()">Verificar Respostas</button>
             </div>
             <div id="qaScore" class="score-display hidden"></div>
         </div>
@@ -217,10 +343,47 @@
             <div class="true-false-container" id="trueFalseContainer">
                 <!-- Os itens de True/False serão gerados aqui pelo JavaScript -->
             </div>
-            <div class="button-group">
-                <button class="action-button" onclick="checkTrueFalse()">Verificar Respostas</button>
-            </div>
             <div id="trueFalseScore" class="score-display hidden"></div>
+        </div>
+
+        <!-- Nova Atividade: Correção de Erros -->
+        <div class="game-section">
+            <h2 class="game-title">Correção de Erros: Present Simple e Present Continuous</h2>
+            <p class="text-center text-sm text-gray-600 mb-4">Leia as frases e corrija os erros de uso do Present Simple ou Present Continuous. Reescreva a frase corretamente.</p>
+            <div class="error-correction-container" id="errorCorrectionContainer">
+                <!-- Itens de correção de erros serão gerados aqui -->
+            </div>
+            <div id="errorCorrectionScore" class="score-display hidden"></div>
+        </div>
+
+        <!-- Nova Atividade: Ordenar Frases -->
+        <div class="game-section">
+            <h2 class="game-title">Ordenar Frases: Reconstrua as Sentenças</h2>
+            <p class="text-center text-sm text-gray-600 mb-4">As palavras estão embaralhadas. Ordene-as para formar uma frase gramaticalmente correta, focando nos tempos presentes.</p>
+            <div class="sentence-ordering-container" id="sentenceOrderingContainer">
+                <!-- Itens de ordenação de frases serão gerados aqui -->
+            </div>
+            <div id="sentenceOrderingScore" class="score-display hidden"></div>
+        </div>
+
+        <!-- Nova Atividade: Transformação de Frases -->
+        <div class="game-section">
+            <h2 class="game-title">Transformação de Frases: Afirmativa, Negativa, Interrogativa</h2>
+            <p class="text-center text-sm text-gray-600 mb-4">Transforme as frases para a forma indicada (negativa, afirmativa ou interrogativa), usando os verbos do texto.</p>
+            <div class="sentence-transformation-container" id="sentenceTransformationContainer">
+                <!-- Itens de transformação de frases serão gerados aqui -->
+            </div>
+            <div id="sentenceTransformationScore" class="score-display hidden"></div>
+        </div>
+
+        <!-- Nova Atividade: Sinônimos e Antônimos -->
+        <div class="game-section">
+            <h2 class="game-title">Sinônimos e Antônimos: Escolha a Melhor Opção</h2>
+            <p class="text-center text-sm text-gray-600 mb-4">Para cada palavra destacada, escolha a opção que melhor se encaixa como sinônimo ou antônimo, de acordo com o contexto do diálogo.</p>
+            <div class="synonym-antonym-container" id="synonymAntonymContainer">
+                <!-- Itens de sinônimos/antônimos serão gerados aqui -->
+            </div>
+            <div id="synonymAntonymScore" class="score-display hidden"></div>
         </div>
 
         <!-- Jogo de Flashcards de Vocabulário -->
@@ -230,10 +393,56 @@
             <div class="flashcard-game-container" id="flashcardGameContainer">
                 <!-- Os flashcards serão gerados aqui pelo JavaScript -->
             </div>
-            <div class="button-group">
-                <button class="action-button" onclick="checkFlashcards()">Verificar Respostas</button>
-            </div>
             <div id="flashcardScore" class="score-display hidden"></div>
+        </div>
+
+        <!-- Nova Atividade: Guia de Escrita (Sem Gabarito Automático) -->
+        <div class="game-section">
+            <h2 class="game-title">Guia de Escrita: Crie seu Próprio Texto</h2>
+            <p class="text-center text-sm text-gray-600 mb-4">Use as estruturas obrigatórias, o vocabulário e as ideias do diálogo para escrever um pequeno texto sobre sua rotina de trabalho, hobbies ou características pessoais. Use Present Simple e Present Continuous.</p>
+            <p class="text-center text-sm text-gray-600 mb-4 highlight-instruction">**Dica:** Anote e destaque do texto e das atividades quais expressões ou construções você achou importantes e quer usar em seu próprio texto!</p>
+            <div class="writing-guide-content">
+                <h4>Prompts Sugeridos:</h4>
+                <ul>
+                    <li>Descreva sua rotina diária de trabalho/estudo, usando Present Simple.</li>
+                    <li>Fale sobre o que você está fazendo *agora* (Present Continuous) ou planos para o futuro próximo.</li>
+                    <li>Compartilhe seus gostos e desgostos (likes and dislikes).</li>
+                    <li>Descreva sua cidade ou o lugar onde você mora.</li>
+                </ul>
+                <h4>Estruturas Obrigatórias (Use todas em seu texto):</h4>
+                <ul>
+                    <li>**Busy**</li>
+                    <li>**Tight schedule**</li>
+                    <li>**Try to get everything finalized before the end of the month**</li>
+                    <li>**Currently**</li>
+                    <li>**Review proposal**</li>
+                    <li>**Manage the lifecycle of**</li>
+                    <li>**Work closely with**</li>
+                    <li>**My main responsibility is**</li>
+                    <li>**I also deal with…**</li>
+                </ul>
+            </div>
+            <label for="studentWriting" class="font-semibold text-lg mb-2">Seu Texto:</label>
+            <textarea id="studentWriting" class="w-full p-3 border border-gray-400 rounded-lg" rows="10" placeholder="Comece a escrever seu texto aqui..."></textarea>
+            <p class="text-sm text-gray-600 mt-2">Este texto não será corrigido automaticamente. Salve-o em seu caderno online ou documento pessoal.</p>
+        </div>
+
+
+        <!-- Botão de Verificação Global -->
+        <div class="button-group">
+            <button class="action-button" onclick="checkAllActivities()">Verificar Todas as Atividades</button>
+        </div>
+    </div>
+
+    <!-- Modal de Resumo -->
+    <div id="summaryModalOverlay" class="modal-overlay">
+        <div class="modal-content">
+            <button class="modal-close-button" onclick="closeSummaryModal()">&times;</button>
+            <h2 class="modal-title">Resultados das Atividades</h2>
+            <p id="overallScore" class="modal-score-summary"></p>
+            <div id="incorrectAnswersSummary" class="modal-incorrect-answers">
+                <!-- Conteúdo das respostas incorretas será inserido aqui -->
+            </div>
         </div>
     </div>
 
@@ -332,52 +541,49 @@
             const feedbackElement = document.getElementById(`feedback-blank-${index}`);
             feedbackElement.textContent = '';
             feedbackElement.className = 'feedback'; // Resetar classes
-            fillInBlanksScoreDisplay.classList.add('hidden'); // Ocultar pontuação ao resetar individualmente
         }
 
-        function checkFillInBlanks() {
+        // Função para verificar e retornar resultados, sem exibir feedback imediato
+        function checkFillInBlanksAndGetResults() {
             let correctCount = 0;
             let incorrectCount = 0;
+            const incorrectItems = [];
 
             fillInBlanksData.forEach((item, index) => {
-                const feedbackElement = document.getElementById(`feedback-blank-${index}`);
-                feedbackElement.className = 'feedback'; // Resetar classes
-
                 let isItemCorrect = true;
+                let userAnswerText = [];
+
                 if (Array.isArray(item.answer)) {
                     item.answer.forEach((ans, inputIdx) => {
                         const inputElement = document.getElementById(`blank-${index}-${inputIdx}`);
-                        if (inputElement && inputElement.value.trim().toLowerCase() === ans.toLowerCase()) {
-                            // Parte individual correta
-                        } else {
+                        const userVal = inputElement ? inputElement.value.trim() : '';
+                        userAnswerText.push(userVal);
+                        if (userVal.toLowerCase() !== ans.toLowerCase()) {
                             isItemCorrect = false;
                         }
                     });
-                    if (isItemCorrect) {
-                        feedbackElement.textContent = 'Correto!';
-                        feedbackElement.classList.add('correct');
-                        correctCount++;
-                    } else {
-                        feedbackElement.textContent = `Incorreto. Respostas corretas: ${item.answer.join(', ')}`;
-                        feedbackElement.classList.add('incorrect');
-                        incorrectCount++;
-                    }
                 } else {
                     const inputElement = document.getElementById(`blank-${index}`);
-                    if (inputElement && inputElement.value.trim().toLowerCase() === item.answer.toLowerCase()) {
-                        feedbackElement.textContent = 'Correto!';
-                        feedbackElement.classList.add('correct');
-                        correctCount++;
-                    } else {
-                        feedbackElement.textContent = `Incorreto. Resposta correta: ${item.answer}`;
-                        feedbackElement.classList.add('incorrect');
-                        incorrectCount++;
+                    const userVal = inputElement ? inputElement.value.trim() : '';
+                    userAnswerText.push(userVal);
+                    if (userVal.toLowerCase() !== item.answer.toLowerCase()) {
+                        isItemCorrect = false;
                     }
                 }
-            });
 
-            fillInBlanksScoreDisplay.textContent = `Acertos: ${correctCount} | Erros: ${incorrectCount}`;
-            fillInBlanksScoreDisplay.classList.remove('hidden');
+                if (isItemCorrect) {
+                    correctCount++;
+                } else {
+                    incorrectCount++;
+                    incorrectItems.push({
+                        activity: "Preencher Lacunas",
+                        question: item.sentence.replace(/\((.*?)\)/g, '_____'), // Mostrar a frase com lacunas
+                        userAnswer: userAnswerText.join(' / '),
+                        correctAnswer: Array.isArray(item.answer) ? item.answer.join(' / ') : item.answer
+                    });
+                }
+            });
+            return { correct: correctCount, incorrect: incorrectCount, incorrectItems: incorrectItems };
         }
 
         // --- Lógica do Jogo de Criar Perguntas/Respostas ---
@@ -420,35 +626,34 @@
                 feedbackElement.textContent = '';
                 feedbackElement.className = 'feedback'; // Resetar classes
             }
-            qaScoreDisplay.classList.add('hidden'); // Ocultar pontuação ao resetar individualmente
         }
 
-        function checkQA() {
+        // Função para verificar e retornar resultados, sem exibir feedback imediato
+        function checkQAAndGetResults() {
             let correctCount = 0;
             let incorrectCount = 0;
+            const incorrectItems = [];
 
             qaData.forEach((item, index) => {
                 const inputElement = document.getElementById(`qa-input-${index}`);
-                const feedbackElement = document.getElementById(`feedback-qa-${index}`);
-                feedbackElement.className = 'feedback'; // Resetar classes
-
-                const userAnswer = inputElement.value.trim().toLowerCase();
+                const userAnswer = inputElement ? inputElement.value.trim() : '';
                 const correctAnswer = item.correctResponse.toLowerCase();
 
-                // Verificação simples por enquanto, pode ser melhorada com NLP mais robusto
-                if (userAnswer.includes(correctAnswer.slice(0, Math.min(correctAnswer.length, 10))) && userAnswer.length > 5) {
-                    feedbackElement.textContent = 'Parece bom!';
-                    feedbackElement.classList.add('correct');
+                let isCorrect = userAnswer.toLowerCase().includes(correctAnswer.slice(0, Math.min(correctAnswer.length, 10))) && userAnswer.length > 5;
+
+                if (isCorrect) {
                     correctCount++;
                 } else {
-                    feedbackElement.textContent = `Considere: "${item.correctResponse}"`;
-                    feedbackElement.classList.add('incorrect');
                     incorrectCount++;
+                    incorrectItems.push({
+                        activity: "Desafio de Perguntas e Respostas",
+                        question: item.prompt,
+                        userAnswer: userAnswer,
+                        correctAnswer: item.correctResponse
+                    });
                 }
             });
-
-            qaScoreDisplay.textContent = `Acertos: ${correctCount} | Erros: ${incorrectCount}`;
-            qaScoreDisplay.classList.remove('hidden');
+            return { correct: correctCount, incorrect: incorrectCount, incorrectItems: incorrectItems };
         }
 
         // --- Lógica do Jogo de Verdadeiro ou Falso ---
@@ -495,39 +700,316 @@
             }
             const radioButtons = document.querySelectorAll(`input[name="tf-${index}"]`);
             radioButtons.forEach(radio => radio.checked = false);
-            trueFalseScoreDisplay.classList.add('hidden'); // Ocultar pontuação ao resetar individualmente
         }
 
-        function checkTrueFalse() {
+        // Função para verificar e retornar resultados, sem exibir feedback imediato
+        function checkTrueFalseAndGetResults() {
             let correctCount = 0;
             let incorrectCount = 0;
+            const incorrectItems = [];
 
             trueFalseData.forEach((item, index) => {
-                const feedbackElement = document.getElementById(`feedback-tf-${index}`);
-                feedbackElement.className = 'feedback'; // Resetar classes
                 const selectedOption = document.querySelector(`input[name="tf-${index}"]:checked`);
+                const userAnswer = selectedOption ? selectedOption.value === 'true' : null; // null se não selecionado
 
-                if (!selectedOption) {
-                    feedbackElement.textContent = 'Por favor, selecione uma opção.';
-                    feedbackElement.classList.add('incorrect');
-                    return; // Não incrementar incorrectCount aqui, pois é uma falta de resposta
-                }
+                let isCorrect = (userAnswer !== null && userAnswer === item.correct);
 
-                const userAnswer = selectedOption.value === 'true';
-                if (userAnswer === item.correct) {
-                    feedbackElement.textContent = 'Correto!';
-                    feedbackElement.classList.add('correct');
+                if (isCorrect) {
                     correctCount++;
                 } else {
-                    feedbackElement.textContent = `Incorreto. ${item.explanation}`;
-                    feedbackElement.classList.add('incorrect');
                     incorrectCount++;
+                    incorrectItems.push({
+                        activity: "Desafio Verdadeiro ou Falso",
+                        question: item.statement,
+                        userAnswer: (userAnswer === true ? 'Verdadeiro' : (userAnswer === false ? 'Falso' : 'Nenhuma resposta')),
+                        correctAnswer: item.correct ? 'Verdadeiro' : 'Falso',
+                        explanation: item.explanation
+                    });
                 }
             });
-
-            trueFalseScoreDisplay.textContent = `Acertos: ${correctCount} | Erros: ${incorrectCount}`;
-            trueFalseScoreDisplay.classList.remove('hidden');
+            return { correct: correctCount, incorrect: incorrectCount, incorrectItems: incorrectItems };
         }
+
+        // --- Nova Atividade: Correção de Erros ---
+        const errorCorrectionData = [
+            { sentence: "Alex is usually go for a run in the mornings.", correct: "Alex usually goes for a run in the mornings.", explanation: "Uso incorreto do Present Simple: 'usually goes' e não 'is usually go'." },
+            { sentence: "Ben managing the lifecycle of projects.", correct: "Ben manages the lifecycle of projects.", explanation: "Faltou o verbo 'to be' para Present Continuous ou deveria ser Present Simple." },
+            { sentence: "What you are doing in your free time?", correct: "What do you do in your free time?", explanation: "Erro na estrutura da pergunta com Present Simple." },
+            { sentence: "My boss is expecting it by 5 PM, so I prepare a presentation.", correct: "My boss is expecting it by 5 PM, so I am preparing a presentation.", explanation: "Ação temporária e em andamento, deve ser Present Continuous." },
+            { sentence: "Alex always learns something new.", correct: "Alex is always learning something new.", explanation: "Com 'always' para expressar algo que acontece frequentemente e é notável, usamos Present Continuous." },
+            { sentence: "The bureaucratic processes can be frustrating.", correct: "The bureaucratic processes can be frustrating.", explanation: "A frase já está correta. 'Can be' é Present Simple." },
+            { sentence: "We are currently celebrate the completion.", correct: "We are currently celebrating the completion.", explanation: "Erro na forma do verbo após 'are' no Present Continuous." }
+        ];
+
+        const errorCorrectionContainer = document.getElementById('errorCorrectionContainer');
+        const errorCorrectionScoreDisplay = document.getElementById('errorCorrectionScore');
+
+        function generateErrorCorrection() {
+            errorCorrectionContainer.innerHTML = '';
+            errorCorrectionData.forEach((item, index) => {
+                const correctionItem = document.createElement('div');
+                correctionItem.className = 'correction-item';
+                correctionItem.innerHTML = `
+                    <label>${index + 1}. Frase com erro: "${item.sentence}"</label>
+                    <textarea id="correction-input-${index}" placeholder="Reescreva a frase corretamente..."></textarea>
+                    <button class="individual-reset-button" onclick="resetIndividualCorrection(${index})">Reset</button>
+                    <div id="feedback-correction-${index}" class="feedback"></div>
+                `;
+                errorCorrectionContainer.appendChild(correctionItem);
+            });
+        }
+
+        function resetIndividualCorrection(index) {
+            document.getElementById(`correction-input-${index}`).value = '';
+            const feedbackElement = document.getElementById(`feedback-correction-${index}`);
+            if (feedbackElement) {
+                feedbackElement.textContent = '';
+                feedbackElement.className = 'feedback';
+            }
+        }
+
+        function checkErrorCorrectionAndGetResults() {
+            let correctCount = 0;
+            let incorrectCount = 0;
+            const incorrectItems = [];
+
+            errorCorrectionData.forEach((item, index) => {
+                const inputElement = document.getElementById(`correction-input-${index}`);
+                const userAnswer = inputElement ? inputElement.value.trim() : '';
+
+                // Verificação simples: se a resposta do usuário contém a resposta correta (ignorando maiúsculas/minúsculas)
+                // e tem um tamanho razoável. Pode ser aprimorada com regex ou NLP para maior precisão.
+                let isCorrect = userAnswer.toLowerCase().includes(item.correct.toLowerCase()) && userAnswer.length > (item.correct.length * 0.7);
+
+                if (isCorrect) {
+                    correctCount++;
+                } else {
+                    incorrectCount++;
+                    incorrectItems.push({
+                        activity: "Correção de Erros",
+                        question: item.sentence,
+                        userAnswer: userAnswer,
+                        correctAnswer: item.correct,
+                        explanation: item.explanation
+                    });
+                }
+            });
+            return { correct: correctCount, incorrect: incorrectCount, incorrectItems: incorrectItems };
+        }
+
+        // --- Nova Atividade: Ordenar Frases ---
+        const sentenceOrderingData = [
+            { scrambled: ["working", "I", "on", "am", "deadline", "a", "tight"], correct: "I am working on a tight deadline.", hint: "Começa com 'I'." },
+            { scrambled: ["do", "you", "what", "free", "time", "in", "your", "do", "?"], correct: "What do you do in your free time?", hint: "É uma pergunta sobre rotina." },
+            { scrambled: ["network", "reviewing", "upgrade", "proposals", "currently", "I", "am", "some"], correct: "I am currently reviewing some network upgrade proposals.", hint: "Ação acontecendo agora." },
+            { scrambled: ["live", "in", "Rio de Janeiro", "I"], correct: "I live in Rio de Janeiro.", hint: "Fato sobre moradia." },
+            { scrambled: ["football", "every", "play", "Saturday", "I"], correct: "I play football every Saturday.", hint: "Hábito semanal." },
+            { scrambled: ["is", "more", "and", "complex", "getting", "it", "more"], correct: "It is getting more and more complex.", hint: "Situação em mudança." }
+        ];
+
+        const sentenceOrderingContainer = document.getElementById('sentenceOrderingContainer');
+        const sentenceOrderingScoreDisplay = document.getElementById('sentenceOrderingScore');
+
+        function generateSentenceOrdering() {
+            sentenceOrderingContainer.innerHTML = '';
+            sentenceOrderingData.forEach((item, index) => {
+                const orderingItem = document.createElement('div');
+                orderingItem.className = 'ordering-item';
+                orderingItem.innerHTML = `
+                    <label>${index + 1}. Ordene as palavras:</label>
+                    <p class="scrambled-words">${item.scrambled.join(' ')}</p>
+                    <input type="text" id="ordering-input-${index}" placeholder="Digite a frase correta aqui...">
+                    <button class="individual-reset-button" onclick="resetIndividualOrdering(${index})">Reset</button>
+                    <div id="feedback-ordering-${index}" class="feedback"></div>
+                `;
+                sentenceOrderingContainer.appendChild(orderingItem);
+            });
+        }
+
+        function resetIndividualOrdering(index) {
+            document.getElementById(`ordering-input-${index}`).value = '';
+            const feedbackElement = document.getElementById(`feedback-ordering-${index}`);
+            if (feedbackElement) {
+                feedbackElement.textContent = '';
+                feedbackElement.className = 'feedback';
+            }
+        }
+
+        function checkSentenceOrderingAndGetResults() {
+            let correctCount = 0;
+            let incorrectCount = 0;
+            const incorrectItems = [];
+
+            sentenceOrderingData.forEach((item, index) => {
+                const inputElement = document.getElementById(`ordering-input-${index}`);
+                const userAnswer = inputElement ? inputElement.value.trim() : '';
+
+                // Normaliza as strings para comparação (remove pontuação, espaços extras, minúsculas)
+                const normalize = (str) => str.toLowerCase().replace(/[.,?!]/g, '').replace(/\s+/g, ' ').trim();
+                const normalizedUserAnswer = normalize(userAnswer);
+                const normalizedCorrectAnswer = normalize(item.correct);
+
+                let isCorrect = (normalizedUserAnswer === normalizedCorrectAnswer);
+
+                if (isCorrect) {
+                    correctCount++;
+                } else {
+                    incorrectCount++;
+                    incorrectItems.push({
+                        activity: "Ordenar Frases",
+                        question: item.scrambled.join(' '),
+                        userAnswer: userAnswer,
+                        correctAnswer: item.correct,
+                        hint: item.hint
+                    });
+                }
+            });
+            return { correct: correctCount, incorrect: incorrectCount, incorrectItems: incorrectItems };
+        }
+
+        // --- Nova Atividade: Transformação de Frases ---
+        const sentenceTransformationData = [
+            { sentence: "Alex works with engineers.", transformTo: "Negative", correct: "Alex does not work with engineers.", hint: "Use 'does not' (doesn't) para Present Simple na negativa." },
+            { sentence: "Ben is preparing a presentation.", transformTo: "Interrogative", correct: "Is Ben preparing a presentation?", hint: "Comece com 'Is' para Present Continuous na interrogativa." },
+            { sentence: "They are not visiting next week.", transformTo: "Affirmative", correct: "They are visiting next week.", hint: "Remova 'not' e mantenha o 'are'." },
+            { sentence: "Does Maria like the beaches?", transformTo: "Affirmative", correct: "Maria likes the beaches.", hint: "Remova 'Does' e adicione 's' ao verbo." },
+            { sentence: "I am not enjoying the challenges.", transformTo: "Affirmative", correct: "I am enjoying the challenges.", hint: "Remova 'not'." },
+            { sentence: "He deals with a lot of paperwork.", transformTo: "Interrogative", correct: "Does he deal with a lot of paperwork?", hint: "Use 'Does' e o verbo na forma base." }
+        ];
+
+        const sentenceTransformationContainer = document.getElementById('sentenceTransformationContainer');
+        const sentenceTransformationScoreDisplay = document.getElementById('sentenceTransformationScore');
+
+        function generateSentenceTransformation() {
+            sentenceTransformationContainer.innerHTML = '';
+            sentenceTransformationData.forEach((item, index) => {
+                const transformationItem = document.createElement('div');
+                transformationItem.className = 'transformation-item';
+                transformationItem.innerHTML = `
+                    <label>${index + 1}. Frase: "${item.sentence}"</label>
+                    <p>Transformar para: <strong>${item.transformTo}</strong></p>
+                    <textarea id="transformation-input-${index}" placeholder="Sua frase transformada..."></textarea>
+                    <button class="individual-reset-button" onclick="resetIndividualTransformation(${index})">Reset</button>
+                    <div id="feedback-transformation-${index}" class="feedback"></div>
+                `;
+                sentenceTransformationContainer.appendChild(transformationItem);
+            });
+        }
+
+        function resetIndividualTransformation(index) {
+            document.getElementById(`transformation-input-${index}`).value = '';
+            const feedbackElement = document.getElementById(`feedback-transformation-${index}`);
+            if (feedbackElement) {
+                feedbackElement.textContent = '';
+                feedbackElement.className = 'feedback';
+            }
+        }
+
+        function checkSentenceTransformationAndGetResults() {
+            let correctCount = 0;
+            let incorrectCount = 0;
+            const incorrectItems = [];
+
+            sentenceTransformationData.forEach((item, index) => {
+                const inputElement = document.getElementById(`transformation-input-${index}`);
+                const userAnswer = inputElement ? inputElement.value.trim() : '';
+
+                const normalize = (str) => str.toLowerCase().replace(/[.,?!]/g, '').replace(/\s+/g, ' ').trim();
+                const normalizedUserAnswer = normalize(userAnswer);
+                const normalizedCorrectAnswer = normalize(item.correct);
+
+                let isCorrect = (normalizedUserAnswer === normalizedCorrectAnswer);
+
+                if (isCorrect) {
+                    correctCount++;
+                } else {
+                    incorrectCount++;
+                    incorrectItems.push({
+                        activity: "Transformação de Frases",
+                        question: `Frase: "${item.sentence}" (Transformar para: ${item.transformTo})`,
+                        userAnswer: userAnswer,
+                        correctAnswer: item.correct,
+                        hint: item.hint
+                    });
+                }
+            });
+            return { correct: correctCount, incorrect: incorrectCount, incorrectItems: incorrectItems };
+        }
+
+        // --- Nova Atividade: Sinônimos e Antônimos ---
+        const synonymAntonymData = [
+            { word: "tight", type: "Sinônimo", context: "tight deadline", options: ["loose", "strict", "easy", "flexible"], correct: "strict", explanation: "No contexto de 'tight deadline', 'strict' é o sinônimo mais próximo." },
+            { word: "complex", type: "Antônimo", context: "quite complex", options: ["simple", "complicated", "intricate", "difficult"], correct: "simple", explanation: "'Simple' é o antônimo de 'complex'." },
+            { word: "essential", type: "Sinônimo", context: "are essential", options: ["unnecessary", "optional", "crucial", "minor"], correct: "crucial", explanation: "'Crucial' significa extremamente importante, assim como 'essential'." },
+            { word: "dynamic", type: "Sinônimo", context: "dynamic city", options: ["stagnant", "lively", "boring", "quiet"], correct: "lively", explanation: "Uma cidade 'dynamic' é cheia de vida e energia." },
+            { word: "dislike", type: "Antônimo", context: "do you dislike", options: ["hate", "enjoy", "detest", "prefer"], correct: "enjoy", explanation: "'Enjoy' é o antônimo de 'dislike'." },
+            { word: "cutting-edge", type: "Sinônimo", context: "cutting-edge technology", options: ["outdated", "old-fashioned", "innovative", "basic"], correct: "innovative", explanation: "'Cutting-edge' significa o mais avançado ou 'innovative'." }
+        ];
+
+        const synonymAntonymContainer = document.getElementById('synonymAntonymContainer');
+        const synonymAntonymScoreDisplay = document.getElementById('synonymAntonymScore');
+
+        function generateSynonymAntonym() {
+            synonymAntonymContainer.innerHTML = '';
+            synonymAntonymData.forEach((item, index) => {
+                const saItem = document.createElement('div');
+                saItem.className = 'synonym-antonym-item';
+                let optionsHtml = item.options.map(option => `
+                    <label class="inline-flex items-center mr-4">
+                        <input type="radio" name="sa-${index}" value="${option}" class="form-radio text-blue-600">
+                        <span class="ml-2">${option}</span>
+                    </label>
+                `).join('');
+
+                saItem.innerHTML = `
+                    <label>${index + 1}. Qual é o <strong>${item.type}</strong> de "<span class="flashcard-term">${item.word}</span>" no contexto "${item.context}"?</label>
+                    <div class="flex flex-wrap mt-2">
+                        ${optionsHtml}
+                    </div>
+                    <button class="individual-reset-button" onclick="resetIndividualSynonymAntonym(${index})">Reset</button>
+                    <div id="feedback-sa-${index}" class="feedback"></div>
+                `;
+                synonymAntonymContainer.appendChild(saItem);
+            });
+        }
+
+        function resetIndividualSynonymAntonym(index) {
+            const feedbackElement = document.getElementById(`feedback-sa-${index}`);
+            if (feedbackElement) {
+                feedbackElement.textContent = '';
+                feedbackElement.className = 'feedback';
+            }
+            const radioButtons = document.querySelectorAll(`input[name="sa-${index}"]`);
+            radioButtons.forEach(radio => radio.checked = false);
+        }
+
+        function checkSynonymAntonymAndGetResults() {
+            let correctCount = 0;
+            let incorrectCount = 0;
+            const incorrectItems = [];
+
+            synonymAntonymData.forEach((item, index) => {
+                const selectedOption = document.querySelector(`input[name="sa-${index}"]:checked`);
+                const userAnswer = selectedOption ? selectedOption.value : 'Nenhuma resposta';
+
+                let isCorrect = (userAnswer === item.correct);
+
+                if (isCorrect) {
+                    correctCount++;
+                } else {
+                    incorrectCount++;
+                    incorrectItems.push({
+                        activity: "Sinônimos e Antônimos",
+                        question: `Qual é o ${item.type} de "${item.word}" no contexto "${item.context}"?`,
+                        userAnswer: userAnswer,
+                        correctAnswer: item.correct,
+                        explanation: item.explanation
+                    });
+                }
+            });
+            return { correct: correctCount, incorrect: incorrectCount, incorrectItems: incorrectItems };
+        }
+
 
         // --- Lógica do Jogo de Flashcards de Vocabulário ---
         const flashcardVocabularyData = [
@@ -586,35 +1068,226 @@
                 feedbackElement.textContent = '';
                 feedbackElement.className = 'feedback'; // Resetar classes
             }
-            flashcardScoreDisplay.classList.add('hidden'); // Ocultar pontuação ao resetar individualmente
         }
 
-        function checkFlashcards() {
-            let correctCount = 0;
-            let incorrectCount = 0;
+        // Função para verificar e retornar resultados, sem exibir feedback imediato
+        function checkFlashcardsAndGetResults() {
+            let correctCount = 0; // Contagem de itens completamente preenchidos
+            let incorrectCount = 0; // Contagem de itens incompletos
+            const incorrectItems = [];
 
             flashcardVocabularyData.forEach((item, index) => {
                 const notesInput = document.getElementById(`flashcard-notes-${index}`);
                 const sentenceInput = document.getElementById(`flashcard-sentence-${index}`);
-                const feedbackElement = document.getElementById(`feedback-flashcard-${index}`);
-                feedbackElement.className = 'feedback'; // Resetar classes
 
                 const notesFilled = notesInput.value.trim().length > 0;
                 const sentenceFilled = sentenceInput.value.trim().length > 0;
 
                 if (notesFilled && sentenceFilled) {
-                    feedbackElement.textContent = `Ótimo! Definição esperada: "${item.definition}". Sua frase: "${sentenceInput.value.trim()}".`;
-                    feedbackElement.classList.add('correct');
                     correctCount++;
                 } else {
-                    feedbackElement.textContent = `Incompleto. Lembre-se de fazer suas anotações e criar uma frase. Definição esperada: "${item.definition}".`;
-                    feedbackElement.classList.add('incorrect');
                     incorrectCount++;
+                    incorrectItems.push({
+                        activity: "Flashcards de Vocabulário de Trabalho",
+                        question: `Termo: ${item.term}`,
+                        userNotes: notesInput.value.trim(),
+                        userSentence: sentenceInput.value.trim(),
+                        correctDefinition: item.definition // Mostrar a definição esperada aqui
+                    });
                 }
             });
+            return { correct: correctCount, incorrect: incorrectCount, incorrectItems: incorrectItems };
+        }
 
-            flashcardScoreDisplay.textContent = `Acertos (itens completos): ${correctCount} | Incompletos: ${incorrectCount}`;
-            flashcardScoreDisplay.classList.remove('hidden');
+        // --- Lógica do Modal de Resumo ---
+        const summaryModalOverlay = document.getElementById('summaryModalOverlay');
+        const overallScoreDisplay = document.getElementById('overallScore');
+        const incorrectAnswersSummary = document.getElementById('incorrectAnswersSummary');
+
+        function openSummaryModal() {
+            summaryModalOverlay.classList.add('visible');
+        }
+
+        function closeSummaryModal() {
+            summaryModalOverlay.classList.remove('visible');
+            // Opcional: Limpar campos ou reiniciar o jogo aqui
+            // location.reload(); // Para reiniciar a página completamente
+        }
+
+        // Função para verificar todas as atividades e exibir o resumo
+        function checkAllActivities() {
+            let totalCorrect = 0;
+            let totalIncorrect = 0;
+            let allIncorrectDetails = [];
+
+            // Preencher Lacunas
+            const fillBlanksResults = checkFillInBlanksAndGetResults();
+            totalCorrect += fillBlanksResults.correct;
+            totalIncorrect += fillBlanksResults.incorrect;
+            if (fillBlanksResults.incorrectItems.length > 0) {
+                allIncorrectDetails.push({
+                    activity: "Preencher Lacunas",
+                    items: fillBlanksResults.incorrectItems
+                });
+            }
+
+            // Perguntas e Respostas
+            const qaResults = checkQAAndGetResults();
+            totalCorrect += qaResults.correct;
+            totalIncorrect += qaResults.incorrect;
+            if (qaResults.incorrectItems.length > 0) {
+                allIncorrectDetails.push({
+                    activity: "Desafio de Perguntas e Respostas",
+                    items: qaResults.incorrectItems
+                });
+            }
+
+            // Verdadeiro ou Falso
+            const trueFalseResults = checkTrueFalseAndGetResults();
+            totalCorrect += trueFalseResults.correct;
+            totalIncorrect += trueFalseResults.incorrect;
+            if (trueFalseResults.incorrectItems.length > 0) {
+                allIncorrectDetails.push({
+                    activity: "Desafio Verdadeiro ou Falso",
+                    items: trueFalseResults.incorrectItems
+                });
+            }
+
+            // Correção de Erros
+            const errorCorrectionResults = checkErrorCorrectionAndGetResults();
+            totalCorrect += errorCorrectionResults.correct;
+            totalIncorrect += errorCorrectionResults.incorrect;
+            if (errorCorrectionResults.incorrectItems.length > 0) {
+                allIncorrectDetails.push({
+                    activity: "Correção de Erros",
+                    items: errorCorrectionResults.incorrectItems
+                });
+            }
+
+            // Ordenar Frases
+            const sentenceOrderingResults = checkSentenceOrderingAndGetResults();
+            totalCorrect += sentenceOrderingResults.correct;
+            totalIncorrect += sentenceOrderingResults.incorrect;
+            if (sentenceOrderingResults.incorrectItems.length > 0) {
+                allIncorrectDetails.push({
+                    activity: "Ordenar Frases",
+                    items: sentenceOrderingResults.incorrectItems
+                });
+            }
+
+            // Transformação de Frases
+            const sentenceTransformationResults = checkSentenceTransformationAndGetResults();
+            totalCorrect += sentenceTransformationResults.correct;
+            totalIncorrect += sentenceTransformationResults.incorrect;
+            if (sentenceTransformationResults.incorrectItems.length > 0) {
+                allIncorrectDetails.push({
+                    activity: "Transformação de Frases",
+                    items: sentenceTransformationResults.incorrectItems
+                });
+            }
+
+            // Sinônimos e Antônimos
+            const synonymAntonymResults = checkSynonymAntonymAndGetResults();
+            totalCorrect += synonymAntonymResults.correct;
+            totalIncorrect += synonymAntonymResults.incorrect;
+            if (synonymAntonymResults.incorrectItems.length > 0) {
+                allIncorrectDetails.push({
+                    activity: "Sinônimos e Antônimos",
+                    items: synonymAntonymResults.incorrectItems
+                });
+            }
+
+            // Flashcards de Vocabulário
+            const flashcardResults = checkFlashcardsAndGetResults();
+            totalCorrect += flashcardResults.correct;
+            totalIncorrect += flashcardResults.incorrect; // Incompletos contam como incorretos para o total
+            if (flashcardResults.incorrectItems.length > 0) {
+                allIncorrectDetails.push({
+                    activity: "Flashcards de Vocabulário de Trabalho",
+                    items: flashcardResults.incorrectItems
+                });
+            }
+
+            // Atualizar pontuação geral no modal
+            overallScoreDisplay.textContent = `Total de Acertos: ${totalCorrect} | Total de Erros/Incompletos: ${totalIncorrect}`;
+
+            // Construir a lista de respostas incorretas no modal
+            incorrectAnswersSummary.innerHTML = ''; // Limpar conteúdo anterior
+            if (allIncorrectDetails.length > 0) {
+                const incorrectTitle = document.createElement('h3');
+                incorrectTitle.textContent = 'Respostas Incorretas/Incompletas:';
+                incorrectAnswersSummary.appendChild(incorrectTitle);
+
+                allIncorrectDetails.forEach(activityGroup => {
+                    const activityTitle = document.createElement('h4');
+                    activityTitle.textContent = activityGroup.activity;
+                    activityTitle.style.marginTop = '1rem';
+                    activityTitle.style.marginBottom = '0.5rem';
+                    activityTitle.style.fontWeight = 'bold';
+                    activityTitle.style.color = '#334155';
+                    incorrectAnswersSummary.appendChild(activityTitle);
+
+                    const ul = document.createElement('ul');
+                    activityGroup.items.forEach(item => {
+                        const li = document.createElement('li');
+                        li.style.marginBottom = '0.75rem';
+                        li.style.padding = '0.5rem';
+                        li.style.backgroundColor = '#fef2f2';
+                        li.style.borderLeft = '4px solid #ef4444';
+                        li.style.borderRadius = '0.5rem';
+
+                        if (activityGroup.activity === "Flashcards de Vocabulário de Trabalho") {
+                            li.innerHTML = `
+                                <strong>Termo:</strong> ${item.question.replace('Termo: ', '')}<br>
+                                <span class="user-answer">Suas anotações: "${item.userNotes || 'N/A'}"</span><br>
+                                <span class="user-answer">Sua frase: "${item.userSentence || 'N/A'}"</span><br>
+                                <span class="correct-answer">Definição esperada: "${item.correctDefinition}"</span>
+                            `;
+                        } else if (activityGroup.activity === "Desafio Verdadeiro ou Falso") {
+                            li.innerHTML = `
+                                <strong>Afirmação:</strong> ${item.question}<br>
+                                <span class="user-answer">Sua resposta: "${item.userAnswer}"</span><br>
+                                <span class="correct-answer">Resposta correta: "${item.correctAnswer}"</span><br>
+                                <span class="correct-answer">Explicação: "${item.explanation}"</span>
+                            `;
+                        } else if (activityGroup.activity === "Correção de Erros" || activityGroup.activity === "Transformação de Frases" || activityGroup.activity === "Ordenar Frases") {
+                            li.innerHTML = `
+                                <strong>Frase Original/Problema:</strong> "${item.question}"<br>
+                                <span class="user-answer">Sua resposta: "${item.userAnswer || 'N/A'}"</span><br>
+                                <span class="correct-answer">Resposta correta: "${item.correctAnswer}"</span>
+                                ${item.hint ? `<br><span class="correct-answer">Dica: ${item.hint}</span>` : ''}
+                                ${item.explanation ? `<br><span class="correct-answer">Explicação: ${item.explanation}</span>` : ''}
+                            `;
+                        } else if (activityGroup.activity === "Sinônimos e Antônimos") {
+                            li.innerHTML = `
+                                <strong>Pergunta:</strong> ${item.question}<br>
+                                <span class="user-answer">Sua resposta: "${item.userAnswer || 'N/A'}"</span><br>
+                                <span class="correct-answer">Resposta correta: "${item.correctAnswer}"</span><br>
+                                <span class="correct-answer">Explicação: "${item.explanation}"</span>
+                            `;
+                        }
+                        else {
+                            li.innerHTML = `
+                                <strong>Pergunta/Frase:</strong> ${item.question}<br>
+                                <span class="user-answer">Sua resposta: "${item.userAnswer}"</span><br>
+                                <span class="correct-answer">Resposta correta: "${item.correctAnswer}"</span>
+                            `;
+                        }
+                        ul.appendChild(li);
+                    });
+                    incorrectAnswersSummary.appendChild(ul);
+                });
+            } else {
+                const noIncorrect = document.createElement('p');
+                noIncorrect.textContent = 'Parabéns! Você acertou todas as questões!';
+                noIncorrect.style.textAlign = 'center';
+                noIncorrect.style.color = '#10b981';
+                noIncorrect.style.fontSize = '1.1rem';
+                incorrectAnswersSummary.appendChild(noIncorrect);
+            }
+
+            // Abrir o modal
+            openSummaryModal();
         }
 
 
@@ -623,8 +1296,13 @@
             generateFillInBlanks();
             generateQA();
             generateTrueFalse();
-            generateFlashcardVocabulary(); // Chamar a nova função de flashcards de vocabulário
+            generateErrorCorrection(); // Nova atividade
+            generateSentenceOrdering(); // Nova atividade
+            generateSentenceTransformation(); // Nova atividade
+            generateSynonymAntonym(); // Nova atividade
+            generateFlashcardVocabulary();
         };
     </script>
 </body>
 </html>
+
