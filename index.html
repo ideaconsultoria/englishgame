@@ -13,14 +13,14 @@
             color: #334155;
             display: flex;
             justify-content: center;
-            align-items: flex-start; /* Align to top for better content flow */
+            align-items: flex-start; /* Alinhar ao topo para melhor fluxo de conteúdo */
             min-height: 100vh;
             padding: 2rem;
             box-sizing: border-box;
         }
         .container {
             background-color: #ffffff;
-            border-radius: 1.5rem; /* More rounded corners */
+            border-radius: 1.5rem; /* Cantos mais arredondados */
             box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
             padding: 2.5rem;
             max-width: 900px;
@@ -36,39 +36,39 @@
             background-color: #f8fafc;
         }
         .game-title {
-            font-size: 1.75rem; /* Larger title */
+            font-size: 1.75rem; /* Título maior */
             font-weight: 700;
             color: #1e293b;
             margin-bottom: 1.5rem;
             text-align: center;
         }
         .dialogue-box {
-            background-color: #e0f2fe; /* Light blue background */
-            border-left: 5px solid #38b2ac; /* Teal border */
+            background-color: #e0f2fe; /* Fundo azul claro */
+            border-left: 5px solid #38b2ac; /* Borda teal */
             padding: 1.5rem;
             border-radius: 0.75rem;
             margin-bottom: 1.5rem;
-            max-height: 400px; /* Limit height */
-            overflow-y: auto; /* Scroll if content overflows */
+            max-height: 400px; /* Limitar altura */
+            overflow-y: auto; /* Rolagem se o conteúdo transbordar */
         }
         .dialogue-box p {
             margin-bottom: 0.75rem;
             line-height: 1.6;
         }
         .dialogue-box strong {
-            color: #0d9488; /* Darker teal for names */
+            color: #0d9488; /* Teal mais escuro para nomes */
         }
         .dialogue-box em {
             font-style: normal;
             font-weight: 600;
-            color: #0f766e; /* Even darker teal for emphasized words */
+            color: #0f766e; /* Teal ainda mais escuro para palavras enfatizadas */
         }
-        .fill-in-blanks-container, .qa-container {
+        .fill-in-blanks-container, .qa-container, .true-false-container, .flashcard-game-container {
             display: flex;
             flex-direction: column;
             gap: 1rem;
         }
-        .blank-item, .qa-item {
+        .blank-item, .qa-item, .tf-item, .flashcard-item {
             display: flex;
             flex-direction: column;
             gap: 0.5rem;
@@ -76,28 +76,31 @@
             background-color: #ffffff;
             border-radius: 0.75rem;
             border: 1px solid #cbd5e1;
+            position: relative; /* Para posicionar o botão de reset individual */
         }
-        .blank-item label, .qa-item label {
+        .blank-item label, .qa-item label, .tf-item label, .flashcard-item label {
             font-weight: 600;
             color: #475569;
         }
-        .blank-item input, .qa-item input {
+        .blank-item input, .qa-item input, .qa-item textarea, .flashcard-item input, .flashcard-item textarea {
             padding: 0.75rem;
             border: 1px solid #94a3b8;
             border-radius: 0.5rem;
             font-size: 1rem;
             width: 100%;
             box-sizing: border-box;
+            resize: vertical; /* Permite redimensionar textareas */
         }
         .feedback {
             margin-top: 0.5rem;
             font-weight: 600;
+            /* As cores serão adicionadas via JS após a verificação global */
         }
         .correct {
-            color: #10b981; /* Green */
+            color: #10b981; /* Verde */
         }
         .incorrect {
-            color: #ef4444; /* Red */
+            color: #ef4444; /* Vermelho */
         }
         .button-group {
             display: flex;
@@ -107,7 +110,7 @@
         }
         .action-button {
             padding: 0.75rem 1.5rem;
-            background-color: #3b82f6; /* Blue */
+            background-color: #3b82f6; /* Azul */
             color: white;
             border: none;
             border-radius: 0.75rem;
@@ -125,131 +128,124 @@
             transform: translateY(0);
             box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
         }
-        .flashcard-container {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            gap: 1.5rem;
-        }
-        .flashcard {
-            width: 100%;
-            max-width: 400px;
-            height: 200px;
-            background-color: #60a5fa; /* Blue */
-            border-radius: 1rem;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            font-size: 1.5rem;
-            font-weight: 700;
-            color: white;
-            cursor: pointer;
-            transition: transform 0.4s ease-in-out, background-color 0.3s ease;
-            transform-style: preserve-3d;
-            position: relative;
-            box-shadow: 0 8px 15px rgba(0, 0, 0, 0.2);
-        }
-        .flashcard.flipped {
-            transform: rotateY(180deg);
-        }
-        .flashcard-front, .flashcard-back {
+        .individual-reset-button {
             position: absolute;
-            width: 100%;
-            height: 100%;
-            backface-visibility: hidden;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            padding: 1rem;
-            text-align: center;
-            box-sizing: border-box;
-        }
-        .flashcard-back {
-            transform: rotateY(180deg);
-            background-color: #38b2ac; /* Teal */
-        }
-        .flashcard-controls {
-            display: flex;
-            gap: 1rem;
-            margin-top: 1rem;
-        }
-        .qa-item textarea {
-            min-height: 80px;
-            padding: 0.75rem;
-            border: 1px solid #94a3b8;
+            top: 0.75rem;
+            right: 0.75rem;
+            background-color: #ef4444; /* Vermelho */
+            color: white;
+            border: none;
             border-radius: 0.5rem;
-            font-size: 1rem;
-            width: 100%;
-            box-sizing: border-box;
-            resize: vertical;
+            padding: 0.3rem 0.6rem;
+            font-size: 0.75rem;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+        .individual-reset-button:hover {
+            background-color: #dc2626;
+        }
+        .score-display {
+            text-align: center;
+            font-size: 1.25rem;
+            font-weight: 600;
+            margin-top: 1rem;
+            padding: 0.75rem;
+            border-radius: 0.75rem;
+            background-color: #e0f2fe;
+            color: #0d9488;
+        }
+        /* Estilo para termos destacados nos flashcards */
+        .flashcard-term {
+            font-weight: 700;
+            color: #0d9488; /* Teal mais escuro */
+            background-color: #d1fae5; /* Fundo verde claro */
+            padding: 0.2rem 0.4rem;
+            border-radius: 0.3rem;
+        }
+        .flashcard-example {
+            font-style: italic;
+            color: #475569;
+            font-size: 0.9rem;
+            margin-top: 0.5rem;
         }
     </style>
 </head>
 <body>
     <div class="container">
-        <h1 class="text-4xl font-extrabold text-center text-gray-900 mb-6">Mastering Present Tenses</h1>
+        <h1 class="text-4xl font-extrabold text-center text-gray-900 mb-6">Dominando os Tempos Presentes</h1>
 
-        <!-- Dialogue Section -->
+        <!-- Seção do Diálogo -->
         <div class="game-section">
-            <h2 class="game-title">Conversation Dialogue: A Day in the Life</h2>
+            <h2 class="game-title">Diálogo de Conversação: Um Dia na Vida</h2>
             <div class="dialogue-box" id="dialogueBox">
-                <!-- Dialogue content will be inserted here by JavaScript -->
+                <!-- O conteúdo do diálogo será inserido aqui pelo JavaScript -->
             </div>
-            <p class="text-center text-sm text-gray-600 mt-4">Read the dialogue carefully, paying attention to the verbs in **bold** and *italic*.</p>
+            <p class="text-center text-sm text-gray-600 mt-4">Leia o diálogo cuidadosamente, prestando atenção aos verbos em **negrito** e *itálico*.</p>
         </div>
 
-        <!-- Flashcards Game -->
+        <!-- Jogo de Preencher Lacunas -->
         <div class="game-section">
-            <h2 class="game-title">Flashcards: Identify the Tense</h2>
-            <div class="flashcard-container">
-                <div class="flashcard" id="flashcard">
-                    <div class="flashcard-front" id="flashcardFront"></div>
-                    <div class="flashcard-back" id="flashcardBack"></div>
-                </div>
-                <div class="flashcard-controls">
-                    <button class="action-button" id="prevCardBtn">Previous</button>
-                    <button class="action-button" id="nextCardBtn">Next</button>
-                </div>
-            </div>
-            <p class="text-center text-sm text-gray-600 mt-4">Click the card to reveal the answer!</p>
-        </div>
-
-        <!-- Fill-in-the-Blanks Game -->
-        <div class="game-section">
-            <h2 class="game-title">Fill in the Blanks: Complete the Sentences</h2>
-            <p class="text-center text-sm text-gray-600 mb-4">Complete the sentences using the correct form of the verb in parentheses (Present Simple or Present Continuous).</p>
+            <h2 class="game-title">Preencha as Lacunas: Complete as Frases</h2>
+            <p class="text-center text-sm text-gray-600 mb-4">Complete as frases usando a forma correta do verbo entre parênteses (Present Simple ou Present Continuous).</p>
             <div class="fill-in-blanks-container" id="fillInBlanksContainer">
-                <!-- Blanks will be generated here by JavaScript -->
+                <!-- As lacunas serão geradas aqui pelo JavaScript -->
             </div>
             <div class="button-group">
-                <button class="action-button" onclick="checkFillInBlanks()">Check Answers</button>
-                <button class="action-button" onclick="resetFillInBlanks()">Reset</button>
+                <button class="action-button" onclick="checkFillInBlanks()">Verificar Respostas</button>
             </div>
+            <div id="fillInBlanksScore" class="score-display hidden"></div>
         </div>
 
-        <!-- Create a Question/Answer Game -->
+        <!-- Jogo de Criar Perguntas/Respostas -->
         <div class="game-section">
-            <h2 class="game-title">Question & Answer Challenge</h2>
-            <p class="text-center text-sm text-gray-600 mb-4">For each statement, either **create a question** that the statement answers, or **create an answer** for the given question, using the correct present tense.</p>
+            <h2 class="game-title">Desafio de Perguntas e Respostas</h2>
+            <p class="text-center text-sm text-gray-600 mb-4">Para cada afirmação, **crie uma pergunta** que a afirmação responde, ou **crie uma resposta** para a pergunta dada, usando o tempo verbal presente correto.</p>
             <div class="qa-container" id="qaContainer">
-                <!-- QA items will be generated here by JavaScript -->
+                <!-- Os itens de Q&A serão gerados aqui pelo JavaScript -->
             </div>
             <div class="button-group">
-                <button class="action-button" onclick="checkQA()">Check Answers</button>
-                <button class="action-button" onclick="resetQA()">Reset</button>
+                <button class="action-button" onclick="checkQA()">Verificar Respostas</button>
             </div>
+            <div id="qaScore" class="score-display hidden"></div>
+        </div>
+
+        <!-- Jogo de Verdadeiro ou Falso -->
+        <div class="game-section">
+            <h2 class="game-title">Desafio Verdadeiro ou Falso</h2>
+            <p class="text-center text-sm text-gray-600 mb-4">Leia a afirmação e decida se é Verdadeira ou Falsa com base no diálogo.</p>
+            <div class="true-false-container" id="trueFalseContainer">
+                <!-- Os itens de True/False serão gerados aqui pelo JavaScript -->
+            </div>
+            <div class="button-group">
+                <button class="action-button" onclick="checkTrueFalse()">Verificar Respostas</button>
+            </div>
+            <div id="trueFalseScore" class="score-display hidden"></div>
+        </div>
+
+        <!-- Jogo de Flashcards de Vocabulário -->
+        <div class="game-section">
+            <h2 class="game-title">Flashcards de Vocabulário de Trabalho</h2>
+            <p class="text-center text-sm text-gray-600 mb-4">Para cada termo ou expressão, faça suas anotações e crie uma frase usando o vocabulário alvo.</p>
+            <div class="flashcard-game-container" id="flashcardGameContainer">
+                <!-- Os flashcards serão gerados aqui pelo JavaScript -->
+            </div>
+            <div class="button-group">
+                <button class="action-button" onclick="checkFlashcards()">Verificar Respostas</button>
+            </div>
+            <div id="flashcardScore" class="score-display hidden"></div>
         </div>
     </div>
 
     <script>
-        // Dialogue content
+        // Conteúdo do diálogo
         const dialogueContent = `
             <p><strong>Alex:</strong> Hi Ben! It's great to see you again. How <em>are you doing</em> today? You <em>look</em> a bit busy, as usual!</p>
             <p><strong>Ben:</strong> Hi Alex! Good to see you too! I'm doing well, thanks. Yes, I <strong>am working</strong> on a tight deadline for a new substation project, so I <strong>am feeling</strong> a little stressed, but it's exciting! We <strong>are trying</strong> to get everything finalized before the end of the month. And you? How <strong>are things going</strong> with you?</p>
             <p><strong>Alex:</strong> I'm good, thanks! I <strong>am currently reviewing</strong> some network upgrade proposals for a big client. It’s always something new and fast-paced in telecom, isn't it? So, tell me, what <strong>are you working on</strong> these days? What <strong>is your role</strong> as a project analyst in electric projects? I know the basics, but tell me more.</p>
             <p><strong>Ben:</strong> Well, you know I <strong>manage</strong> the lifecycle of electrical infrastructure projects. This usually <strong>involves</strong> planning, executing, and closing projects. I <strong>work</strong> closely with engineers and contractors. My main responsibility <strong>is to ensure</strong> that projects stay on schedule and within budget. I also <strong>deal</strong> with a lot of regulatory compliance. It <strong>is</strong> a lot of paperwork!</p>
             <p><strong>Alex:</strong> It sounds quite complex, indeed! What kind of personal characteristics <strong>do you think</strong> are most important for your job? I remember we talked about this briefly last time.</p>
-            <p><strong>Ben:</strong> I believe strong organizational skills <strong>are essential</strong>, and you definitely <strong>need</strong> to be detail-oriented. Problem-solving abilities <strong>are</strong> also crucial, because unexpected issues <strong>always come up</strong>. And, of course, good communication <strong>helps</strong> a lot when you <strong>are coordinating</strong> different teams. What about you? What <strong>do you find</strong> important in your role?</p>
+            <p><strong>Ben:</strong> I believe strong organizational skills <strong>are essential</strong>, and you definitely <strong>need</strong> to be detail-oriented. Problem-solving abilities <strong>are</strong> also crucial, because unexpected issues <strong>always come up</strong>. And, of course, good communication <strong>helps</strong> a lot when you <strong>are coordinating</strong> different teams. What about you? What <strong>do you find</strong> important in your role? </p>
             <p><strong>Alex:</strong> I totally agree! Communication <strong>is key</strong> in my role too. I <strong>am responsible for</strong> telecom projects, primarily focusing on fiber optic deployments and 5G network expansions. I <strong>live</strong> in Rio de Janeiro, and our main office <strong>is located</strong> downtown. My family <strong>lives</strong> here too. Where <strong>do you live</strong> these days? Are you still in São Paulo?</p>
             <p><strong>Ben:</strong> Yes, I <strong>live</strong> in São Paulo. It’s a very dynamic city, much like Rio, but with its own unique energy. My office <strong>is</strong> in the industrial district here. My parents <strong>visit</strong> me often, as they <strong>live</strong> in a smaller town nearby. What <strong>do you like</strong> most about living in Rio? I remember you <strong>love</strong> the beaches.</p>
             <p><strong>Alex:</strong> Oh, I <strong>love</strong> the beaches and the vibrant culture! I often <strong>go</strong> for a run along Copacabana beach in the mornings. The weather <strong>is usually</strong> sunny. Right now, I <strong>am planning</strong> a trip to the Christ the Redeemer statue with some friends who <strong>are visiting</strong> next week. They <strong>are coming</strong> from Europe for the first time. What <strong>do you like</strong> to do in your free time in São Paulo? Are you still playing football?</p>
@@ -266,65 +262,7 @@
 
         document.getElementById('dialogueBox').innerHTML = dialogueContent;
 
-        // --- Flashcards Game Logic ---
-        const flashcardsData = [
-            { front: "Ben is working on a tight deadline for a new substation project.", back: "Present Continuous (action happening now)" },
-            { front: "Alex is currently reviewing some network upgrade proposals.", back: "Present Continuous (action happening now)" },
-            { front: "Ben manages the lifecycle of electrical infrastructure projects.", back: "Present Simple (habitual action/fact)" },
-            { front: "Unexpected issues always come up.", back: "Present Simple (general truth/recurrent event)" },
-            { front: "Alex is responsible for telecom projects.", back: "Present Simple (state/fact)" },
-            { front: "Alex lives in Rio de Janeiro.", back: "Present Simple (permanent situation)" },
-            { front: "Ben's parents visit him often.", back: "Present Simple (habitual action)" },
-            { front: "Alex's friends are visiting next week.", back: "Present Continuous (future arrangement)" },
-            { front: "The weather is usually sunny in Rio.", back: "Present Simple (general truth/usual state)" },
-            { front: "Ben is trying a new Japanese fusion place this weekend.", back: "Present Continuous (temporary action/future arrangement)" },
-            { front: "Ben plays football with a group of friends every Saturday.", back: "Present Simple (routine/habit)" },
-            { front: "They are currently practicing for a local tournament.", back: "Present Continuous (ongoing action)" },
-            { front: "A typical day starts with checking emails.", back: "Present Simple (routine)" },
-            { front: "Ben is preparing a presentation for the board this afternoon.", back: "Present Continuous (action happening now/temporary)" },
-            { front: "Alex is participating in a workshop today.", back: "Present Continuous (action happening now)" },
-            { front: "It is getting more and more complex!", back: "Present Continuous (changing situation)" },
-            { front: "Alex is always learning something new.", back: "Present Continuous (repeated action, often with 'always' for emphasis)" },
-            { front: "The bureaucratic processes can be a bit frustrating.", back: "Present Simple (general truth/characteristic)" },
-            { front: "Alex's team is working very hard right now.", back: "Present Continuous (ongoing action)" },
-            { front: "They are making good progress.", back: "Present Continuous (ongoing action)" },
-            { front: "Unexpected site issues are causing significant delays.", back: "Present Continuous (ongoing problem)" },
-            { front: "Alex's next call is starting in five minutes.", back: "Present Continuous (future arrangement)" }
-        ];
-
-        let currentCardIndex = 0;
-        const flashcardElement = document.getElementById('flashcard');
-        const flashcardFront = document.getElementById('flashcardFront');
-        const flashcardBack = document.getElementById('flashcardBack');
-        const prevCardBtn = document.getElementById('prevCardBtn');
-        const nextCardBtn = document.getElementById('nextCardBtn');
-
-        function displayFlashcard(index) {
-            flashcardElement.classList.remove('flipped');
-            setTimeout(() => { // Small delay to allow flip animation
-                flashcardFront.textContent = flashcardsData[index].front;
-                flashcardBack.textContent = flashcardsData[index].back;
-            }, 200);
-        }
-
-        flashcardElement.addEventListener('click', () => {
-            flashcardElement.classList.toggle('flipped');
-        });
-
-        prevCardBtn.addEventListener('click', () => {
-            currentCardIndex = (currentCardIndex - 1 + flashcardsData.length) % flashcardsData.length;
-            displayFlashcard(currentCardIndex);
-        });
-
-        nextCardBtn.addEventListener('click', () => {
-            currentCardIndex = (currentCardIndex + 1) % flashcardsData.length;
-            displayFlashcard(currentCardIndex);
-        });
-
-        // Initialize flashcard
-        displayFlashcard(currentCardIndex);
-
-        // --- Fill-in-the-Blanks Game Logic ---
+        // --- Lógica do Jogo de Preencher Lacunas ---
         const fillInBlanksData = [
             { sentence: "Ben (work) on a tight deadline for a new substation project right now.", answer: "is working" },
             { sentence: "Alex (currently / review) some network upgrade proposals.", answer: "is currently reviewing" },
@@ -351,6 +289,7 @@
         ];
 
         const fillInBlanksContainer = document.getElementById('fillInBlanksContainer');
+        const fillInBlanksScoreDisplay = document.getElementById('fillInBlanksScore');
 
         function generateFillInBlanks() {
             fillInBlanksContainer.innerHTML = '';
@@ -360,7 +299,6 @@
 
                 let sentenceHtml = item.sentence;
                 if (Array.isArray(item.answer)) {
-                    // Handle multiple blanks in one sentence
                     let inputIndex = 0;
                     sentenceHtml = sentenceHtml.replace(/\((.*?)\)/g, () => {
                         const inputId = `blank-${index}-${inputIndex}`;
@@ -373,68 +311,76 @@
 
                 blankItem.innerHTML = `
                     <label>${index + 1}. ${sentenceHtml}</label>
+                    <button class="individual-reset-button" onclick="resetIndividualBlank(${index})">Reset</button>
                     <div id="feedback-blank-${index}" class="feedback"></div>
                 `;
                 fillInBlanksContainer.appendChild(blankItem);
             });
         }
 
+        function resetIndividualBlank(index) {
+            const item = fillInBlanksData[index];
+            if (Array.isArray(item.answer)) {
+                item.answer.forEach((_, inputIdx) => {
+                    const inputElement = document.getElementById(`blank-${index}-${inputIdx}`);
+                    if (inputElement) inputElement.value = '';
+                });
+            } else {
+                const inputElement = document.getElementById(`blank-${index}`);
+                if (inputElement) inputElement.value = '';
+            }
+            const feedbackElement = document.getElementById(`feedback-blank-${index}`);
+            feedbackElement.textContent = '';
+            feedbackElement.className = 'feedback'; // Resetar classes
+            fillInBlanksScoreDisplay.classList.add('hidden'); // Ocultar pontuação ao resetar individualmente
+        }
+
         function checkFillInBlanks() {
+            let correctCount = 0;
+            let incorrectCount = 0;
+
             fillInBlanksData.forEach((item, index) => {
                 const feedbackElement = document.getElementById(`feedback-blank-${index}`);
-                feedbackElement.className = 'feedback'; // Reset classes
+                feedbackElement.className = 'feedback'; // Resetar classes
 
+                let isItemCorrect = true;
                 if (Array.isArray(item.answer)) {
-                    let allCorrect = true;
                     item.answer.forEach((ans, inputIdx) => {
                         const inputElement = document.getElementById(`blank-${index}-${inputIdx}`);
-                        if (inputElement) {
-                            if (inputElement.value.trim().toLowerCase() === ans.toLowerCase()) {
-                                // Individual part correct, but overall feedback is for the sentence
-                            } else {
-                                allCorrect = false;
-                            }
+                        if (inputElement && inputElement.value.trim().toLowerCase() === ans.toLowerCase()) {
+                            // Parte individual correta
+                        } else {
+                            isItemCorrect = false;
                         }
                     });
-
-                    if (allCorrect) {
-                        feedbackElement.textContent = 'Correct!';
+                    if (isItemCorrect) {
+                        feedbackElement.textContent = 'Correto!';
                         feedbackElement.classList.add('correct');
+                        correctCount++;
                     } else {
-                        feedbackElement.textContent = `Incorrect. Correct answers: ${item.answer.join(', ')}`;
+                        feedbackElement.textContent = `Incorreto. Respostas corretas: ${item.answer.join(', ')}`;
                         feedbackElement.classList.add('incorrect');
+                        incorrectCount++;
                     }
                 } else {
                     const inputElement = document.getElementById(`blank-${index}`);
-                    if (inputElement.value.trim().toLowerCase() === item.answer.toLowerCase()) {
-                        feedbackElement.textContent = 'Correct!';
+                    if (inputElement && inputElement.value.trim().toLowerCase() === item.answer.toLowerCase()) {
+                        feedbackElement.textContent = 'Correto!';
                         feedbackElement.classList.add('correct');
+                        correctCount++;
                     } else {
-                        feedbackElement.textContent = `Incorrect. Correct answer: ${item.answer}`;
+                        feedbackElement.textContent = `Incorreto. Resposta correta: ${item.answer}`;
                         feedbackElement.classList.add('incorrect');
+                        incorrectCount++;
                     }
                 }
             });
+
+            fillInBlanksScoreDisplay.textContent = `Acertos: ${correctCount} | Erros: ${incorrectCount}`;
+            fillInBlanksScoreDisplay.classList.remove('hidden');
         }
 
-        function resetFillInBlanks() {
-            fillInBlanksData.forEach((item, index) => {
-                if (Array.isArray(item.answer)) {
-                    item.answer.forEach((_, inputIdx) => {
-                        const inputElement = document.getElementById(`blank-${index}-${inputIdx}`);
-                        if (inputElement) inputElement.value = '';
-                    });
-                } else {
-                    const inputElement = document.getElementById(`blank-${index}`);
-                    if (inputElement) inputElement.value = '';
-                }
-                const feedbackElement = document.getElementById(`feedback-blank-${index}`);
-                feedbackElement.textContent = '';
-                feedbackElement.className = 'feedback';
-            });
-        }
-
-        // --- Create a Question/Answer Game Logic ---
+        // --- Lógica do Jogo de Criar Perguntas/Respostas ---
         const qaData = [
             { type: 'answer', prompt: "Question: What is Ben working on right now?", correctResponse: "He is working on a new substation project.", example: "He is working on a new substation project." },
             { type: 'question', prompt: "Answer: Alex is currently reviewing network upgrade proposals.", correctResponse: "What is Alex currently reviewing?", example: "What is Alex currently reviewing?" },
@@ -449,6 +395,7 @@
         ];
 
         const qaContainer = document.getElementById('qaContainer');
+        const qaScoreDisplay = document.getElementById('qaScore');
 
         function generateQA() {
             qaContainer.innerHTML = '';
@@ -457,47 +404,226 @@
                 qaItem.className = 'qa-item';
                 qaItem.innerHTML = `
                     <label>${index + 1}. ${item.prompt}</label>
-                    <textarea id="qa-input-${index}" placeholder="Your ${item.type} here..."></textarea>
+                    <textarea id="qa-input-${index}" placeholder="Sua ${item.type} aqui..."></textarea>
+                    <button class="individual-reset-button" onclick="resetIndividualQA(${index})">Reset</button>
                     <div id="feedback-qa-${index}" class="feedback"></div>
                 `;
                 qaContainer.appendChild(qaItem);
             });
         }
 
+        function resetIndividualQA(index) {
+            const inputElement = document.getElementById(`qa-input-${index}`);
+            const feedbackElement = document.getElementById(`feedback-qa-${index}`);
+            if (inputElement) inputElement.value = '';
+            if (feedbackElement) {
+                feedbackElement.textContent = '';
+                feedbackElement.className = 'feedback'; // Resetar classes
+            }
+            qaScoreDisplay.classList.add('hidden'); // Ocultar pontuação ao resetar individualmente
+        }
+
         function checkQA() {
+            let correctCount = 0;
+            let incorrectCount = 0;
+
             qaData.forEach((item, index) => {
                 const inputElement = document.getElementById(`qa-input-${index}`);
                 const feedbackElement = document.getElementById(`feedback-qa-${index}`);
-                feedbackElement.className = 'feedback'; // Reset classes
+                feedbackElement.className = 'feedback'; // Resetar classes
 
                 const userAnswer = inputElement.value.trim().toLowerCase();
                 const correctAnswer = item.correctResponse.toLowerCase();
 
-                // Simple check for now, can be improved with more robust NLP or keyword matching
-                if (userAnswer.includes(correctAnswer.slice(0, Math.min(correctAnswer.length, 10))) && userAnswer.length > 5) { // Basic check
-                    feedbackElement.textContent = 'Looks good!';
+                // Verificação simples por enquanto, pode ser melhorada com NLP mais robusto
+                if (userAnswer.includes(correctAnswer.slice(0, Math.min(correctAnswer.length, 10))) && userAnswer.length > 5) {
+                    feedbackElement.textContent = 'Parece bom!';
                     feedbackElement.classList.add('correct');
+                    correctCount++;
                 } else {
-                    feedbackElement.textContent = `Consider: "${item.correctResponse}"`;
+                    feedbackElement.textContent = `Considere: "${item.correctResponse}"`;
                     feedbackElement.classList.add('incorrect');
+                    incorrectCount++;
                 }
             });
+
+            qaScoreDisplay.textContent = `Acertos: ${correctCount} | Erros: ${incorrectCount}`;
+            qaScoreDisplay.classList.remove('hidden');
         }
 
-        function resetQA() {
-            qaData.forEach((item, index) => {
-                const inputElement = document.getElementById(`qa-input-${index}`);
-                const feedbackElement = document.getElementById(`feedback-qa-${index}`);
-                inputElement.value = '';
-                feedbackElement.textContent = '';
-                feedbackElement.className = 'feedback';
+        // --- Lógica do Jogo de Verdadeiro ou Falso ---
+        const trueFalseData = [
+            { statement: "Ben is currently working on a new bridge project.", correct: false, explanation: "Ele está trabalhando em um projeto de subestação." },
+            { statement: "Alex's main office is located downtown in Rio de Janeiro.", correct: true, explanation: "O diálogo afirma que seu escritório principal fica no centro da cidade." },
+            { statement: "Ben's parents live in São Paulo.", correct: false, explanation: "Eles moram em uma cidade menor próxima." },
+            { statement: "Alex's friends are visiting from Asia next week.", correct: false, explanation: "Eles estão vindo da Europa." },
+            { statement: "Ben enjoys exploring new restaurants in São Paulo.", correct: true, explanation: "Ele menciona isso como um hobby." }
+        ];
+
+        const trueFalseContainer = document.getElementById('trueFalseContainer');
+        const trueFalseScoreDisplay = document.getElementById('trueFalseScore');
+
+        function generateTrueFalse() {
+            trueFalseContainer.innerHTML = '';
+            trueFalseData.forEach((item, index) => {
+                const tfItem = document.createElement('div');
+                tfItem.className = 'tf-item';
+                tfItem.innerHTML = `
+                    <label>${index + 1}. ${item.statement}</label>
+                    <div class="flex gap-4 mt-2">
+                        <label class="inline-flex items-center">
+                            <input type="radio" name="tf-${index}" value="true" class="form-radio text-blue-600">
+                            <span class="ml-2">Verdadeiro</span>
+                        </label>
+                        <label class="inline-flex items-center">
+                            <input type="radio" name="tf-${index}" value="false" class="form-radio text-blue-600">
+                            <span class="ml-2">Falso</span>
+                        </label>
+                    </div>
+                    <button class="individual-reset-button" onclick="resetIndividualTrueFalse(${index})">Reset</button>
+                    <div id="feedback-tf-${index}" class="feedback"></div>
+                `;
+                trueFalseContainer.appendChild(tfItem);
             });
         }
 
-        // Initialize games on page load
+        function resetIndividualTrueFalse(index) {
+            const feedbackElement = document.getElementById(`feedback-tf-${index}`);
+            if (feedbackElement) {
+                feedbackElement.textContent = '';
+                feedbackElement.className = 'feedback'; // Resetar classes
+            }
+            const radioButtons = document.querySelectorAll(`input[name="tf-${index}"]`);
+            radioButtons.forEach(radio => radio.checked = false);
+            trueFalseScoreDisplay.classList.add('hidden'); // Ocultar pontuação ao resetar individualmente
+        }
+
+        function checkTrueFalse() {
+            let correctCount = 0;
+            let incorrectCount = 0;
+
+            trueFalseData.forEach((item, index) => {
+                const feedbackElement = document.getElementById(`feedback-tf-${index}`);
+                feedbackElement.className = 'feedback'; // Resetar classes
+                const selectedOption = document.querySelector(`input[name="tf-${index}"]:checked`);
+
+                if (!selectedOption) {
+                    feedbackElement.textContent = 'Por favor, selecione uma opção.';
+                    feedbackElement.classList.add('incorrect');
+                    return; // Não incrementar incorrectCount aqui, pois é uma falta de resposta
+                }
+
+                const userAnswer = selectedOption.value === 'true';
+                if (userAnswer === item.correct) {
+                    feedbackElement.textContent = 'Correto!';
+                    feedbackElement.classList.add('correct');
+                    correctCount++;
+                } else {
+                    feedbackElement.textContent = `Incorreto. ${item.explanation}`;
+                    feedbackElement.classList.add('incorrect');
+                    incorrectCount++;
+                }
+            });
+
+            trueFalseScoreDisplay.textContent = `Acertos: ${correctCount} | Erros: ${incorrectCount}`;
+            trueFalseScoreDisplay.classList.remove('hidden');
+        }
+
+        // --- Lógica do Jogo de Flashcards de Vocabulário ---
+        const flashcardVocabularyData = [
+            { term: "tight deadline", example: "I am working on a <span class='flashcard-term'>tight deadline</span> for a new substation project.", definition: "Um prazo muito curto para completar uma tarefa." },
+            { term: "network upgrade proposals", example: "I am currently reviewing some <span class='flashcard-term'>network upgrade proposals</span>.", definition: "Propostas para melhorar ou expandir uma rede de comunicação." },
+            { term: "manage the lifecycle", example: "I <span class='flashcard-term'>manage the lifecycle</span> of electrical infrastructure projects.", definition: "Gerenciar todas as fases de um projeto, do início ao fim." },
+            { term: "regulatory compliance", example: "I also deal with a lot of <span class='flashcard-term'>regulatory compliance</span>.", definition: "Estar em conformidade com as regras e leis governamentais." },
+            { term: "organizational skills", example: "I believe strong <span class='flashcard-term'>organizational skills</span> are essential.", definition: "Habilidades para planejar e organizar tarefas e recursos de forma eficiente." },
+            { term: "detail-oriented", example: "You definitely need to be <span class='flashcard-term'>detail-oriented</span>.", definition: "Ter atenção aos pequenos detalhes." },
+            { term: "problem-solving abilities", example: "<span class='flashcard-term'>Problem-solving abilities</span> are also crucial.", definition: "Capacidade de encontrar soluções para problemas." },
+            { term: "coordinating different teams", example: "Good communication helps a lot when you are <span class='flashcard-term'>coordinating different teams</span>.", definition: "Organizar e fazer com que equipes diferentes trabalhem juntas." },
+            { term: "fiber optic deployments", example: "I am responsible for telecom projects, primarily focusing on <span class='flashcard-term'>fiber optic deployments</span>.", definition: "Instalação de cabos de fibra óptica para internet ou comunicação." },
+            { term: "5G network expansions", example: "I am responsible for telecom projects, primarily focusing on <span class='flashcard-term'>5G network expansions</span>.", definition: "Aumento da cobertura ou capacidade de redes 5G." },
+            { term: "dynamic city", example: "It’s a very <span class='flashcard-term'>dynamic city</span>, much like Rio.", definition: "Cidade com muita atividade e mudanças." },
+            { term: "food scene", example: "São Paulo has an incredible <span class='flashcard-term'>food scene</span>.", definition: "O conjunto de restaurantes, culinárias e cultura gastronômica de um lugar." },
+            { term: "typical day", example: "What does a <span class='flashcard-term'>typical day look like</span> for you now?", definition: "Um dia normal ou comum de trabalho." },
+            { term: "project dashboards", example: "A typical day still starts with checking emails and <span class='flashcard-term'>project dashboards</span>.", definition: "Painéis visuais que mostram o status e o progresso de projetos." },
+            { term: "stand-up meeting", example: "I usually have a <span class='flashcard-term'>stand-up meeting</span> with my team around 9 AM.", definition: "Reunião rápida, geralmente em pé, para discutir o progresso diário." },
+            { term: "reviewing progress reports", example: "I spend a lot of time <span class='flashcard-term'>reviewing progress reports</span>.", definition: "Analisar relatórios sobre o andamento de algo." },
+            { term: "updating schedules", example: "I spend a lot of time reviewing progress reports, <span class='flashcard-term'>updating schedules</span>, and communicating with stakeholders.", definition: "Atualizar cronogramas." },
+            { term: "communicating with stakeholders", example: "I spend a lot of time reviewing progress reports, updating schedules, and <span class='flashcard-term'>communicating with stakeholders</span>.", definition: "Se comunicar com todas as partes interessadas em um projeto." },
+            { term: "cybersecurity protocols", example: "Today, I am participating in a workshop on new <span class='flashcard-term'>cybersecurity protocols</span> for our 5G infrastructure.", definition: "Regras e procedimentos para proteger sistemas de computador contra ataques." },
+            { term: "constantly adapting", example: "It is a field where you are <span class='flashcard-term'>constantly adapting</span>.", definition: "Estar sempre se ajustando a novas situações ou mudanças." },
+            { term: "bureaucratic processes", example: "Sometimes, the <span class='flashcard-term'>bureaucratic processes</span> can be a bit frustrating.", definition: "Procedimentos administrativos complexos e demorados." },
+            { term: "cutting-edge technology", example: "I am enjoying the challenges and the opportunity to work with <span class='flashcard-term'>cutting-edge technology</span>.", definition: "Tecnologia mais avançada e inovadora disponível." },
+            { term: "major power line upgrade", example: "We are currently celebrating the completion of a <span class='flashcard-term'>major power line upgrade</span>.", definition: "Uma grande melhoria ou modernização em uma linha de energia elétrica." }
+        ];
+
+        const flashcardGameContainer = document.getElementById('flashcardGameContainer');
+        const flashcardScoreDisplay = document.getElementById('flashcardScore');
+
+        function generateFlashcardVocabulary() {
+            flashcardGameContainer.innerHTML = '';
+            flashcardVocabularyData.forEach((item, index) => {
+                const flashcardItem = document.createElement('div');
+                flashcardItem.className = 'flashcard-item';
+                flashcardItem.innerHTML = `
+                    <label>${index + 1}. Termo: <span class="flashcard-term">${item.term}</span></label>
+                    <p class="flashcard-example">Exemplo do diálogo: "${item.example}"</p>
+                    <label class="mt-2">Suas anotações/definição:</label>
+                    <textarea id="flashcard-notes-${index}" placeholder="Pesquise e anote aqui o que você entendeu..."></textarea>
+                    <label class="mt-2">Sua frase com o vocabulário:</label>
+                    <textarea id="flashcard-sentence-${index}" placeholder="Crie uma frase original usando '${item.term}'..."></textarea>
+                    <button class="individual-reset-button" onclick="resetIndividualFlashcard(${index})">Reset</button>
+                    <div id="feedback-flashcard-${index}" class="feedback"></div>
+                `;
+                flashcardGameContainer.appendChild(flashcardItem);
+            });
+        }
+
+        function resetIndividualFlashcard(index) {
+            document.getElementById(`flashcard-notes-${index}`).value = '';
+            document.getElementById(`flashcard-sentence-${index}`).value = '';
+            const feedbackElement = document.getElementById(`feedback-flashcard-${index}`);
+            if (feedbackElement) {
+                feedbackElement.textContent = '';
+                feedbackElement.className = 'feedback'; // Resetar classes
+            }
+            flashcardScoreDisplay.classList.add('hidden'); // Ocultar pontuação ao resetar individualmente
+        }
+
+        function checkFlashcards() {
+            let correctCount = 0;
+            let incorrectCount = 0;
+
+            flashcardVocabularyData.forEach((item, index) => {
+                const notesInput = document.getElementById(`flashcard-notes-${index}`);
+                const sentenceInput = document.getElementById(`flashcard-sentence-${index}`);
+                const feedbackElement = document.getElementById(`feedback-flashcard-${index}`);
+                feedbackElement.className = 'feedback'; // Resetar classes
+
+                const notesFilled = notesInput.value.trim().length > 0;
+                const sentenceFilled = sentenceInput.value.trim().length > 0;
+
+                if (notesFilled && sentenceFilled) {
+                    feedbackElement.textContent = `Ótimo! Definição esperada: "${item.definition}". Sua frase: "${sentenceInput.value.trim()}".`;
+                    feedbackElement.classList.add('correct');
+                    correctCount++;
+                } else {
+                    feedbackElement.textContent = `Incompleto. Lembre-se de fazer suas anotações e criar uma frase. Definição esperada: "${item.definition}".`;
+                    feedbackElement.classList.add('incorrect');
+                    incorrectCount++;
+                }
+            });
+
+            flashcardScoreDisplay.textContent = `Acertos (itens completos): ${correctCount} | Incompletos: ${incorrectCount}`;
+            flashcardScoreDisplay.classList.remove('hidden');
+        }
+
+
+        // Inicializar jogos ao carregar a página
         window.onload = function() {
             generateFillInBlanks();
             generateQA();
+            generateTrueFalse();
+            generateFlashcardVocabulary(); // Chamar a nova função de flashcards de vocabulário
         };
     </script>
 </body>
