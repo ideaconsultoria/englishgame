@@ -1,0 +1,504 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Present Tenses Practice</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f0f4f8;
+            color: #334155;
+            display: flex;
+            justify-content: center;
+            align-items: flex-start; /* Align to top for better content flow */
+            min-height: 100vh;
+            padding: 2rem;
+            box-sizing: border-box;
+        }
+        .container {
+            background-color: #ffffff;
+            border-radius: 1.5rem; /* More rounded corners */
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+            padding: 2.5rem;
+            max-width: 900px;
+            width: 100%;
+            display: flex;
+            flex-direction: column;
+            gap: 2rem;
+        }
+        .game-section {
+            border: 1px solid #e2e8f0;
+            border-radius: 1rem;
+            padding: 1.5rem;
+            background-color: #f8fafc;
+        }
+        .game-title {
+            font-size: 1.75rem; /* Larger title */
+            font-weight: 700;
+            color: #1e293b;
+            margin-bottom: 1.5rem;
+            text-align: center;
+        }
+        .dialogue-box {
+            background-color: #e0f2fe; /* Light blue background */
+            border-left: 5px solid #38b2ac; /* Teal border */
+            padding: 1.5rem;
+            border-radius: 0.75rem;
+            margin-bottom: 1.5rem;
+            max-height: 400px; /* Limit height */
+            overflow-y: auto; /* Scroll if content overflows */
+        }
+        .dialogue-box p {
+            margin-bottom: 0.75rem;
+            line-height: 1.6;
+        }
+        .dialogue-box strong {
+            color: #0d9488; /* Darker teal for names */
+        }
+        .dialogue-box em {
+            font-style: normal;
+            font-weight: 600;
+            color: #0f766e; /* Even darker teal for emphasized words */
+        }
+        .fill-in-blanks-container, .qa-container {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+        }
+        .blank-item, .qa-item {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+            padding: 0.75rem;
+            background-color: #ffffff;
+            border-radius: 0.75rem;
+            border: 1px solid #cbd5e1;
+        }
+        .blank-item label, .qa-item label {
+            font-weight: 600;
+            color: #475569;
+        }
+        .blank-item input, .qa-item input {
+            padding: 0.75rem;
+            border: 1px solid #94a3b8;
+            border-radius: 0.5rem;
+            font-size: 1rem;
+            width: 100%;
+            box-sizing: border-box;
+        }
+        .feedback {
+            margin-top: 0.5rem;
+            font-weight: 600;
+        }
+        .correct {
+            color: #10b981; /* Green */
+        }
+        .incorrect {
+            color: #ef4444; /* Red */
+        }
+        .button-group {
+            display: flex;
+            gap: 1rem;
+            justify-content: center;
+            margin-top: 1.5rem;
+        }
+        .action-button {
+            padding: 0.75rem 1.5rem;
+            background-color: #3b82f6; /* Blue */
+            color: white;
+            border: none;
+            border-radius: 0.75rem;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background-color 0.3s ease, transform 0.2s ease;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+        .action-button:hover {
+            background-color: #2563eb;
+            transform: translateY(-2px);
+        }
+        .action-button:active {
+            transform: translateY(0);
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+        .flashcard-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 1.5rem;
+        }
+        .flashcard {
+            width: 100%;
+            max-width: 400px;
+            height: 200px;
+            background-color: #60a5fa; /* Blue */
+            border-radius: 1rem;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: white;
+            cursor: pointer;
+            transition: transform 0.4s ease-in-out, background-color 0.3s ease;
+            transform-style: preserve-3d;
+            position: relative;
+            box-shadow: 0 8px 15px rgba(0, 0, 0, 0.2);
+        }
+        .flashcard.flipped {
+            transform: rotateY(180deg);
+        }
+        .flashcard-front, .flashcard-back {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            backface-visibility: hidden;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 1rem;
+            text-align: center;
+            box-sizing: border-box;
+        }
+        .flashcard-back {
+            transform: rotateY(180deg);
+            background-color: #38b2ac; /* Teal */
+        }
+        .flashcard-controls {
+            display: flex;
+            gap: 1rem;
+            margin-top: 1rem;
+        }
+        .qa-item textarea {
+            min-height: 80px;
+            padding: 0.75rem;
+            border: 1px solid #94a3b8;
+            border-radius: 0.5rem;
+            font-size: 1rem;
+            width: 100%;
+            box-sizing: border-box;
+            resize: vertical;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1 class="text-4xl font-extrabold text-center text-gray-900 mb-6">Mastering Present Tenses</h1>
+
+        <!-- Dialogue Section -->
+        <div class="game-section">
+            <h2 class="game-title">Conversation Dialogue: A Day in the Life</h2>
+            <div class="dialogue-box" id="dialogueBox">
+                <!-- Dialogue content will be inserted here by JavaScript -->
+            </div>
+            <p class="text-center text-sm text-gray-600 mt-4">Read the dialogue carefully, paying attention to the verbs in **bold** and *italic*.</p>
+        </div>
+
+        <!-- Flashcards Game -->
+        <div class="game-section">
+            <h2 class="game-title">Flashcards: Identify the Tense</h2>
+            <div class="flashcard-container">
+                <div class="flashcard" id="flashcard">
+                    <div class="flashcard-front" id="flashcardFront"></div>
+                    <div class="flashcard-back" id="flashcardBack"></div>
+                </div>
+                <div class="flashcard-controls">
+                    <button class="action-button" id="prevCardBtn">Previous</button>
+                    <button class="action-button" id="nextCardBtn">Next</button>
+                </div>
+            </div>
+            <p class="text-center text-sm text-gray-600 mt-4">Click the card to reveal the answer!</p>
+        </div>
+
+        <!-- Fill-in-the-Blanks Game -->
+        <div class="game-section">
+            <h2 class="game-title">Fill in the Blanks: Complete the Sentences</h2>
+            <p class="text-center text-sm text-gray-600 mb-4">Complete the sentences using the correct form of the verb in parentheses (Present Simple or Present Continuous).</p>
+            <div class="fill-in-blanks-container" id="fillInBlanksContainer">
+                <!-- Blanks will be generated here by JavaScript -->
+            </div>
+            <div class="button-group">
+                <button class="action-button" onclick="checkFillInBlanks()">Check Answers</button>
+                <button class="action-button" onclick="resetFillInBlanks()">Reset</button>
+            </div>
+        </div>
+
+        <!-- Create a Question/Answer Game -->
+        <div class="game-section">
+            <h2 class="game-title">Question & Answer Challenge</h2>
+            <p class="text-center text-sm text-gray-600 mb-4">For each statement, either **create a question** that the statement answers, or **create an answer** for the given question, using the correct present tense.</p>
+            <div class="qa-container" id="qaContainer">
+                <!-- QA items will be generated here by JavaScript -->
+            </div>
+            <div class="button-group">
+                <button class="action-button" onclick="checkQA()">Check Answers</button>
+                <button class="action-button" onclick="resetQA()">Reset</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Dialogue content
+        const dialogueContent = `
+            <p><strong>Alex:</strong> Hi Ben! It's great to see you again. How <em>are you doing</em> today? You <em>look</em> a bit busy, as usual!</p>
+            <p><strong>Ben:</strong> Hi Alex! Good to see you too! I'm doing well, thanks. Yes, I <strong>am working</strong> on a tight deadline for a new substation project, so I <strong>am feeling</strong> a little stressed, but it's exciting! We <strong>are trying</strong> to get everything finalized before the end of the month. And you? How <strong>are things going</strong> with you?</p>
+            <p><strong>Alex:</strong> I'm good, thanks! I <strong>am currently reviewing</strong> some network upgrade proposals for a big client. It’s always something new and fast-paced in telecom, isn't it? So, tell me, what <strong>are you working on</strong> these days? What <strong>is your role</strong> as a project analyst in electric projects? I know the basics, but tell me more.</p>
+            <p><strong>Ben:</strong> Well, you know I <strong>manage</strong> the lifecycle of electrical infrastructure projects. This usually <strong>involves</strong> planning, executing, and closing projects. I <strong>work</strong> closely with engineers and contractors. My main responsibility <strong>is to ensure</strong> that projects stay on schedule and within budget. I also <strong>deal</strong> with a lot of regulatory compliance. It <strong>is</strong> a lot of paperwork!</p>
+            <p><strong>Alex:</strong> It sounds quite complex, indeed! What kind of personal characteristics <strong>do you think</strong> are most important for your job? I remember we talked about this briefly last time.</p>
+            <p><strong>Ben:</strong> I believe strong organizational skills <strong>are essential</strong>, and you definitely <strong>need</strong> to be detail-oriented. Problem-solving abilities <strong>are</strong> also crucial, because unexpected issues <strong>always come up</strong>. And, of course, good communication <strong>helps</strong> a lot when you <strong>are coordinating</strong> different teams. What about you? What <strong>do you find</strong> important in your role?</p>
+            <p><strong>Alex:</strong> I totally agree! Communication <strong>is key</strong> in my role too. I <strong>am responsible for</strong> telecom projects, primarily focusing on fiber optic deployments and 5G network expansions. I <strong>live</strong> in Rio de Janeiro, and our main office <strong>is located</strong> downtown. My family <strong>lives</strong> here too. Where <strong>do you live</strong> these days? Are you still in São Paulo?</p>
+            <p><strong>Ben:</strong> Yes, I <strong>live</strong> in São Paulo. It’s a very dynamic city, much like Rio, but with its own unique energy. My office <strong>is</strong> in the industrial district here. My parents <strong>visit</strong> me often, as they <strong>live</strong> in a smaller town nearby. What <strong>do you like</strong> most about living in Rio? I remember you <strong>love</strong> the beaches.</p>
+            <p><strong>Alex:</strong> Oh, I <strong>love</strong> the beaches and the vibrant culture! I often <strong>go</strong> for a run along Copacabana beach in the mornings. The weather <strong>is usually</strong> sunny. Right now, I <strong>am planning</strong> a trip to the Christ the Redeemer statue with some friends who <strong>are visiting</strong> next week. They <strong>are coming</strong> from Europe for the first time. What <strong>do you like</strong> to do in your free time in São Paulo? Are you still playing football?</p>
+            <p><strong>Ben:</strong> I <strong>enjoy</strong> exploring new restaurants and art galleries. São Paulo <strong>has</strong> an incredible food scene. This weekend, I <strong>am trying</strong> a new Japanese fusion place that just opened. Yes, I also <strong>play</strong> football with a group of friends every Saturday. We <strong>are currently practicing</strong> for a local tournament, so we <strong>are meeting</strong> twice a week now. It <strong>is</strong> a lot of fun!</p>
+            <p><strong>Alex:</strong> That sounds great! So, regarding your work routine, what <strong>does a typical day look like</strong> for you now? Has anything changed since we last spoke?</p>
+            <p><strong>Ben:</strong> A typical day still <strong>starts</strong> with checking emails and project dashboards. I usually <strong>have</strong> a stand-up meeting with my team around 9 AM. After that, I <strong>spend</strong> a lot of time reviewing progress reports, updating schedules, and communicating with stakeholders. This afternoon, for example, I <strong>am preparing</strong> a presentation for the board about the new substation project. My boss <strong>is expecting</strong> it by 5 PM.</p>
+            <p><strong>Alex:</strong> My routine <strong>is</strong> quite similar! I also <strong>start</strong> with emails. Then, I often <strong>attend</strong> virtual meetings with clients or vendors. Today, I <strong>am participating</strong> in a workshop on new cybersecurity protocols for our 5G infrastructure. It <strong>is getting</strong> more and more complex! I <strong>am always learning</strong> something new, which I <strong>like</strong>.</p>
+            <p><strong>Ben:</strong> Exactly! It <strong>is</strong> a field where you <strong>are constantly adapting</strong>. What <strong>do you dislike</strong> about your job, if anything? I know every job <strong>has</strong> its challenges.</p>
+            <p><strong>Alex:</strong> Sometimes, the bureaucratic processes <strong>can be</strong> a bit frustrating, and the long hours <strong>are</strong> challenging, especially when a project <strong>is facing</strong> delays. But overall, I <strong>am enjoying</strong> the challenges and the opportunity to work with cutting-edge technology. My team <strong>is working</strong> very hard right now on a new initiative, and we <strong>are making</strong> good progress. And you?</p>
+            <p><strong>Ben:</strong> I sometimes <strong>find</strong> the sheer volume of regulations overwhelming, and sometimes, unexpected site issues <strong>are causing</strong> significant delays, which <strong>is</strong> tough. But the satisfaction of seeing a critical infrastructure project completed <strong>makes</strong> it all worthwhile. We <strong>are currently celebrating</strong> the completion of a major power line upgrade.</p>
+            <p><strong>Alex:</strong> I completely understand that feeling! It was great catching up, Ben. I <strong>have</strong> to jump to another meeting now. My next call <strong>is starting</strong> in five minutes.</p>
+            <p><strong>Ben:</strong> You too, Alex! Good luck with your projects and enjoy your friends' visit!</p>
+        `;
+
+        document.getElementById('dialogueBox').innerHTML = dialogueContent;
+
+        // --- Flashcards Game Logic ---
+        const flashcardsData = [
+            { front: "Ben is working on a tight deadline for a new substation project.", back: "Present Continuous (action happening now)" },
+            { front: "Alex is currently reviewing some network upgrade proposals.", back: "Present Continuous (action happening now)" },
+            { front: "Ben manages the lifecycle of electrical infrastructure projects.", back: "Present Simple (habitual action/fact)" },
+            { front: "Unexpected issues always come up.", back: "Present Simple (general truth/recurrent event)" },
+            { front: "Alex is responsible for telecom projects.", back: "Present Simple (state/fact)" },
+            { front: "Alex lives in Rio de Janeiro.", back: "Present Simple (permanent situation)" },
+            { front: "Ben's parents visit him often.", back: "Present Simple (habitual action)" },
+            { front: "Alex's friends are visiting next week.", back: "Present Continuous (future arrangement)" },
+            { front: "The weather is usually sunny in Rio.", back: "Present Simple (general truth/usual state)" },
+            { front: "Ben is trying a new Japanese fusion place this weekend.", back: "Present Continuous (temporary action/future arrangement)" },
+            { front: "Ben plays football with a group of friends every Saturday.", back: "Present Simple (routine/habit)" },
+            { front: "They are currently practicing for a local tournament.", back: "Present Continuous (ongoing action)" },
+            { front: "A typical day starts with checking emails.", back: "Present Simple (routine)" },
+            { front: "Ben is preparing a presentation for the board this afternoon.", back: "Present Continuous (action happening now/temporary)" },
+            { front: "Alex is participating in a workshop today.", back: "Present Continuous (action happening now)" },
+            { front: "It is getting more and more complex!", back: "Present Continuous (changing situation)" },
+            { front: "Alex is always learning something new.", back: "Present Continuous (repeated action, often with 'always' for emphasis)" },
+            { front: "The bureaucratic processes can be a bit frustrating.", back: "Present Simple (general truth/characteristic)" },
+            { front: "Alex's team is working very hard right now.", back: "Present Continuous (ongoing action)" },
+            { front: "They are making good progress.", back: "Present Continuous (ongoing action)" },
+            { front: "Unexpected site issues are causing significant delays.", back: "Present Continuous (ongoing problem)" },
+            { front: "Alex's next call is starting in five minutes.", back: "Present Continuous (future arrangement)" }
+        ];
+
+        let currentCardIndex = 0;
+        const flashcardElement = document.getElementById('flashcard');
+        const flashcardFront = document.getElementById('flashcardFront');
+        const flashcardBack = document.getElementById('flashcardBack');
+        const prevCardBtn = document.getElementById('prevCardBtn');
+        const nextCardBtn = document.getElementById('nextCardBtn');
+
+        function displayFlashcard(index) {
+            flashcardElement.classList.remove('flipped');
+            setTimeout(() => { // Small delay to allow flip animation
+                flashcardFront.textContent = flashcardsData[index].front;
+                flashcardBack.textContent = flashcardsData[index].back;
+            }, 200);
+        }
+
+        flashcardElement.addEventListener('click', () => {
+            flashcardElement.classList.toggle('flipped');
+        });
+
+        prevCardBtn.addEventListener('click', () => {
+            currentCardIndex = (currentCardIndex - 1 + flashcardsData.length) % flashcardsData.length;
+            displayFlashcard(currentCardIndex);
+        });
+
+        nextCardBtn.addEventListener('click', () => {
+            currentCardIndex = (currentCardIndex + 1) % flashcardsData.length;
+            displayFlashcard(currentCardIndex);
+        });
+
+        // Initialize flashcard
+        displayFlashcard(currentCardIndex);
+
+        // --- Fill-in-the-Blanks Game Logic ---
+        const fillInBlanksData = [
+            { sentence: "Ben (work) on a tight deadline for a new substation project right now.", answer: "is working" },
+            { sentence: "Alex (currently / review) some network upgrade proposals.", answer: "is currently reviewing" },
+            { sentence: "Ben usually (manage) several projects at once.", answer: "manages" },
+            { sentence: "What kind of personal characteristics (you / think) are important for your job?", answer: "do you think" },
+            { sentence: "Alex (live) in Rio de Janeiro.", answer: "lives" },
+            { sentence: "His family also (live) there.", answer: "lives" },
+            { sentence: "Ben's parents (visit) him often.", answer: "visit" },
+            { sentence: "Alex's friends (visit) next week, so he (plan) a trip to Christ the Redeemer.", answer: ["are visiting", "is planning"] },
+            { sentence: "The weather in Rio (usually / be) sunny.", answer: "is usually" },
+            { sentence: "São Paulo (have) an incredible food scene.", answer: "has" },
+            { sentence: "This weekend, Ben (try) a new Japanese fusion place.", answer: "is trying" },
+            { sentence: "Ben (play) football with a group of friends every Saturday.", answer: "plays" },
+            { sentence: "They (currently / practice) for a local tournament.", answer: "are currently practicing" },
+            { sentence: "A typical day (start) with checking emails.", answer: "starts" },
+            { sentence: "Ben (prepare) a presentation for the board this afternoon.", answer: "is preparing" },
+            { sentence: "Alex (participate) in a workshop on new cybersecurity protocols today.", answer: "is participating" },
+            { sentence: "It (get) more and more complex!", answer: "is getting" },
+            { sentence: "Alex (always / learn) something new.", answer: "is always learning" },
+            { sentence: "Alex's team (work) very hard right now on a new initiative.", answer: "is working" },
+            { sentence: "They (make) good progress.", answer: "are making" },
+            { sentence: "Unexpected site issues (cause) significant delays right now.", answer: "are causing" },
+            { sentence: "Alex's next call (start) in five minutes.", answer: "is starting" }
+        ];
+
+        const fillInBlanksContainer = document.getElementById('fillInBlanksContainer');
+
+        function generateFillInBlanks() {
+            fillInBlanksContainer.innerHTML = '';
+            fillInBlanksData.forEach((item, index) => {
+                const blankItem = document.createElement('div');
+                blankItem.className = 'blank-item';
+
+                let sentenceHtml = item.sentence;
+                if (Array.isArray(item.answer)) {
+                    // Handle multiple blanks in one sentence
+                    let inputIndex = 0;
+                    sentenceHtml = sentenceHtml.replace(/\((.*?)\)/g, () => {
+                        const inputId = `blank-${index}-${inputIndex}`;
+                        inputIndex++;
+                        return `<input type="text" id="${inputId}" data-index="${index}" data-input-index="${inputIndex - 1}" class="inline-block w-32 px-2 py-1 border border-gray-400 rounded-md">`;
+                    });
+                } else {
+                    sentenceHtml = sentenceHtml.replace(/\((.*?)\)/, `<input type="text" id="blank-${index}" data-index="${index}" class="inline-block w-32 px-2 py-1 border border-gray-400 rounded-md">`);
+                }
+
+                blankItem.innerHTML = `
+                    <label>${index + 1}. ${sentenceHtml}</label>
+                    <div id="feedback-blank-${index}" class="feedback"></div>
+                `;
+                fillInBlanksContainer.appendChild(blankItem);
+            });
+        }
+
+        function checkFillInBlanks() {
+            fillInBlanksData.forEach((item, index) => {
+                const feedbackElement = document.getElementById(`feedback-blank-${index}`);
+                feedbackElement.className = 'feedback'; // Reset classes
+
+                if (Array.isArray(item.answer)) {
+                    let allCorrect = true;
+                    item.answer.forEach((ans, inputIdx) => {
+                        const inputElement = document.getElementById(`blank-${index}-${inputIdx}`);
+                        if (inputElement) {
+                            if (inputElement.value.trim().toLowerCase() === ans.toLowerCase()) {
+                                // Individual part correct, but overall feedback is for the sentence
+                            } else {
+                                allCorrect = false;
+                            }
+                        }
+                    });
+
+                    if (allCorrect) {
+                        feedbackElement.textContent = 'Correct!';
+                        feedbackElement.classList.add('correct');
+                    } else {
+                        feedbackElement.textContent = `Incorrect. Correct answers: ${item.answer.join(', ')}`;
+                        feedbackElement.classList.add('incorrect');
+                    }
+                } else {
+                    const inputElement = document.getElementById(`blank-${index}`);
+                    if (inputElement.value.trim().toLowerCase() === item.answer.toLowerCase()) {
+                        feedbackElement.textContent = 'Correct!';
+                        feedbackElement.classList.add('correct');
+                    } else {
+                        feedbackElement.textContent = `Incorrect. Correct answer: ${item.answer}`;
+                        feedbackElement.classList.add('incorrect');
+                    }
+                }
+            });
+        }
+
+        function resetFillInBlanks() {
+            fillInBlanksData.forEach((item, index) => {
+                if (Array.isArray(item.answer)) {
+                    item.answer.forEach((_, inputIdx) => {
+                        const inputElement = document.getElementById(`blank-${index}-${inputIdx}`);
+                        if (inputElement) inputElement.value = '';
+                    });
+                } else {
+                    const inputElement = document.getElementById(`blank-${index}`);
+                    if (inputElement) inputElement.value = '';
+                }
+                const feedbackElement = document.getElementById(`feedback-blank-${index}`);
+                feedbackElement.textContent = '';
+                feedbackElement.className = 'feedback';
+            });
+        }
+
+        // --- Create a Question/Answer Game Logic ---
+        const qaData = [
+            { type: 'answer', prompt: "Question: What is Ben working on right now?", correctResponse: "He is working on a new substation project.", example: "He is working on a new substation project." },
+            { type: 'question', prompt: "Answer: Alex is currently reviewing network upgrade proposals.", correctResponse: "What is Alex currently reviewing?", example: "What is Alex currently reviewing?" },
+            { type: 'answer', prompt: "Question: Where does Alex live?", correctResponse: "He lives in Rio de Janeiro.", example: "He lives in Rio de Janeiro." },
+            { type: 'question', prompt: "Answer: Ben enjoys exploring new restaurants and art galleries in his free time.", correctResponse: "What does Ben enjoy doing in his free time?", example: "What does Ben enjoy doing in his free time?" },
+            { type: 'answer', prompt: "Question: What is Alex always learning?", correctResponse: "He is always learning something new.", example: "He is always learning something new." },
+            { type: 'question', prompt: "Answer: A typical day for Ben starts with checking emails and project dashboards.", correctResponse: "How does a typical day start for Ben?", example: "How does a typical day start for Ben?" },
+            { type: 'answer', prompt: "Question: What are Alex's friends doing next week?", correctResponse: "His friends are visiting next week.", example: "His friends are visiting next week." },
+            { type: 'question', prompt: "Answer: Ben is trying a new Japanese fusion place this weekend.", correctResponse: "What is Ben trying this weekend?", example: "What is Ben trying this weekend?" },
+            { type: 'answer', prompt: "Question: What is Ben's main responsibility?", correctResponse: "His main responsibility is to ensure that projects stay on schedule and within budget.", example: "His main responsibility is to ensure that projects stay on schedule and within budget." },
+            { type: 'question', prompt: "Answer: Alex often goes for a run along Copacabana beach in the mornings.", correctResponse: "What does Alex often do in the mornings?", example: "What does Alex often do in the mornings?" }
+        ];
+
+        const qaContainer = document.getElementById('qaContainer');
+
+        function generateQA() {
+            qaContainer.innerHTML = '';
+            qaData.forEach((item, index) => {
+                const qaItem = document.createElement('div');
+                qaItem.className = 'qa-item';
+                qaItem.innerHTML = `
+                    <label>${index + 1}. ${item.prompt}</label>
+                    <textarea id="qa-input-${index}" placeholder="Your ${item.type} here..."></textarea>
+                    <div id="feedback-qa-${index}" class="feedback"></div>
+                `;
+                qaContainer.appendChild(qaItem);
+            });
+        }
+
+        function checkQA() {
+            qaData.forEach((item, index) => {
+                const inputElement = document.getElementById(`qa-input-${index}`);
+                const feedbackElement = document.getElementById(`feedback-qa-${index}`);
+                feedbackElement.className = 'feedback'; // Reset classes
+
+                const userAnswer = inputElement.value.trim().toLowerCase();
+                const correctAnswer = item.correctResponse.toLowerCase();
+
+                // Simple check for now, can be improved with more robust NLP or keyword matching
+                if (userAnswer.includes(correctAnswer.slice(0, Math.min(correctAnswer.length, 10))) && userAnswer.length > 5) { // Basic check
+                    feedbackElement.textContent = 'Looks good!';
+                    feedbackElement.classList.add('correct');
+                } else {
+                    feedbackElement.textContent = `Consider: "${item.correctResponse}"`;
+                    feedbackElement.classList.add('incorrect');
+                }
+            });
+        }
+
+        function resetQA() {
+            qaData.forEach((item, index) => {
+                const inputElement = document.getElementById(`qa-input-${index}`);
+                const feedbackElement = document.getElementById(`feedback-qa-${index}`);
+                inputElement.value = '';
+                feedbackElement.textContent = '';
+                feedbackElement.className = 'feedback';
+            });
+        }
+
+        // Initialize games on page load
+        window.onload = function() {
+            generateFillInBlanks();
+            generateQA();
+        };
+    </script>
+</body>
+</html>
